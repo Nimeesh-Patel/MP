@@ -37,18 +37,6 @@ npm install
 npm start
 ```
 
-The React app expects `REACT_APP_API_URL` in your `.env` file to point at the
-running FastAPI server (default `http://localhost:8000`).
-
-Environment variables such as database URLs or secrets should be placed in a
-local `.env` file.  An example configuration is provided in `.env.example`.
-Copy this file to `.env` and adjust the values:
-
-```bash
-cp .env.example .env
-# then edit JWT_SECRET, MONGO_URL and REACT_APP_API_URL as needed
-```
-
 ## License
 
 This project is released under the MIT License.  See [`LICENSE`](LICENSE) for
