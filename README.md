@@ -34,7 +34,7 @@ uvicorn app:app --reload
 # Frontend
 cd src
 npm install
-npm start
+$env:NODE_OPTIONS='--openssl-legacy-provider'; npm start
 ```
 
 ## License
