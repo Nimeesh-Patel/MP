@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from transformers import BertTokenizer, BertForSequenceClassification
 import torch
-
+from routes.auth_routes import router as AuthRouter
 app = FastAPI()
 
 # Enable CORS
@@ -27,6 +27,8 @@ class TweetText(BaseModel):
     text: str
 
 # Prediction endpoint
+
+app.include_router(AuthRouter)
 @app.post("/predict")
 def predict_tweet(tweet: TweetText):
     inputs = tokenizer(tweet.text, return_tensors="pt", padding=True, truncation=True).to(device)
