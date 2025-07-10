@@ -37,9 +37,6 @@ npm install
 npm start
 ```
 
-Environment variables such as database URLs or secrets should be placed in a
-local `.env` file.
-
 ## License
 
 This project is released under the MIT License.  See [`LICENSE`](LICENSE) for
