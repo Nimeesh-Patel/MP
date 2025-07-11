@@ -15,3 +15,10 @@ registration or content moderation are approached as provisional solutions that
 may be replaced once we find better explanations. Recording those insights here
 helps new contributors understand the path of ideas.
 
+## The Role of Testing
+
+Automated tests serve as conjectures about how the code should behave. When
+a test fails, it acts as immediate criticism that guides us toward a better
+explanation or implementation. Maintaining even small test suites keeps the
+project improvable and documents expected behaviour for newcomers.
+
