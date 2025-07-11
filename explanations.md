@@ -22,3 +22,10 @@ a test fails, it acts as immediate criticism that guides us toward a better
 explanation or implementation. Maintaining even small test suites keeps the
 project improvable and documents expected behaviour for newcomers.
 
+## Configurable Token Expiry
+
+Access tokens are now created with a default expiry specified by the
+`TOKEN_MINUTES` environment variable. This grew out of the conjecture about
+shorter token lifetimes. Making the duration configurable lets us experiment
+with security versus convenience without changing code.
+
