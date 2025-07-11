@@ -1,14 +1,17 @@
 # Open Society Combo Platform
 
 ## Problem
-Online communities often fracture along ideological lines or suffer from echo chambers. Existing platforms either emphasise short-form posts, like Twitter, or long-form editing, like Wikipedia, with little cross-pollination. We conjecture that combining features could encourage more rigorous debate and collaborative improvement of ideas.
+Online communities often fracture along ideological lines or fall into echo chambers. Our current workflow relies on markdown edits and a minimal critique template, which can make participation feel static and discourage newcomers. We conjecture that blending familiar interaction patterns could foster richer criticism and collaboration.
 
-## Tentative Design
-- **Wikipedia-style editing** so content can be continually refined.
-- **Reddit-like discussions** attached to each article for open conversation and voting.
-- **GitHub transparency** where all changes and issues are publicly logged.
-- **Socratic questioning** prompts encourage participants to ask clarifying questions rather than attack.
-- **Optional account-less participation** lets newcomers propose edits or comments without full registration, lowering the barrier to entry while still tracking contributions.
+## Tentative Approach
+- **Wikipedia-style editing** so knowledge can be steadily refined by anyone.
+- **Reddit-like discussions** attached to each article for threaded conversation and voting.
+- **GitHub transparency** where all revisions and issues are publicly logged.
+- **Socratic questioning** prompts encourage clarifying questions rather than personal attacks.
+- **Optional account-less participation** lets newcomers suggest edits or comments without full registration while still tracking contributions.
+
+## Initial Reasoning
+Combining these elements may reduce friction in the critique process. The wiki format encourages iterative improvement, Reddit threads capture informal debate, and GitHub logs provide accountability. Socratic prompts aim to keep discussions constructive, and a low barrier to entry invites wider criticism.
 
 ## Invitation for Criticism
-This proposal aims to merge strengths of existing platforms to foster an open society approach. Feedback is welcome using our [critique template](../templates/critique_template.md) so we can refine or reject the idea based on reasoned criticism.
+This conjecture is experimental. Please evaluate the feasibility and possible downsides using the [critique template](../templates/critique_template.md). Suggestions for alternative designs or expanded critique tooling are welcome.
