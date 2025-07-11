@@ -7,7 +7,17 @@ Society** approach to development inspired by Karl Popper and David Deutsch.
 Our goal is not only to improve the software, but also to refine our
 *explanations* for why each piece exists.  Everything starts as a **conjecture**
 and is open to **criticism**.  We keep our philosophy close to the code so that
-contributions remain transparent and improvable.
+contributions remain transparent and improvable.  Newcomers should read this
+file first to understand the current outlook before proposing or criticising
+changes.
+
+## Philosophy
+
+Software design here is always tentative. Inspired by Popper's critical
+rationalism, each implementation choice is treated as a **conjecture** subject to
+criticism. We aim to build clear explanations for why the current code exists.
+See [`conjectures/`](conjectures/) for open proposals and
+[`explanations.md`](explanations.md) for reasoning that has survived criticism.
 
 ## Development Culture
 
@@ -21,6 +31,9 @@ contributions remain transparent and improvable.
 3. **Evolving Explanations** – Significant insights are summarised in
    [`explanations.md`](explanations.md).  This living document records how our
    understanding grows over time.
+4. **Reflect in the README** – When criticism leads to a fundamental change in
+   direction, update this document so newcomers start from the latest
+   perspective.
 
 ## Getting Started
 
