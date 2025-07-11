@@ -47,6 +47,8 @@ This document provides specific instructions for coding agents to engage with th
 
 ## Philosophy Alignment
 
+Helpful: read `README.md`.
+
 Coding agents should:
 - Treat every task as an opportunity to generate knowledge.
 - Use structured processes to engage in conjecture and criticism.
