@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 from routes.auth_routes import router as AuthRouter
+from routes.idea_routes import router as IdeaRouter
 app = FastAPI()
 
 # Enable CORS
@@ -29,6 +30,7 @@ class TweetText(BaseModel):
 # Prediction endpoint
 
 app.include_router(AuthRouter)
+app.include_router(IdeaRouter)
 @app.post("/predict")
 def predict_tweet(tweet: TweetText):
     inputs = tokenizer(tweet.text, return_tensors="pt", padding=True, truncation=True).to(device)
