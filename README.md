@@ -59,7 +59,7 @@ $env:NODE_OPTIONS='--openssl-legacy-provider'; npm start
 ```
 ## For Agents
 
-Conjecture: It would be useful to check out `AGENT.md`.
+Conjecture: It would be useful to check out `templates/AGENTS.md`.
 
 ## License
 
