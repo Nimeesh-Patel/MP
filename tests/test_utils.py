@@ -33,4 +33,3 @@ def test_default_expiry_from_env():
     exp = datetime.fromtimestamp(decoded["exp"], timezone.utc)
     remaining = exp - datetime.now(timezone.utc)
     assert 0 < remaining.total_seconds() <= 60
-
