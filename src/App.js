@@ -11,15 +11,15 @@ function App() {
   return (
     // BEM
     <div className="app">
-      {/* <Sidebar />
+      <Sidebar />
       <Feed />
-      <Widgets /> */}
-      <Router>
+      <Widgets />
+      {/* <Router>
         <Switch>
           <Route exact path="/" component={Login} />
           <Route path="/signup" component={Signup} />
         </Switch>
-      </Router>
+      </Router> */}
     </div>
   );
 }
