@@ -29,6 +29,9 @@ Welcome to the Open Society Social Media project! We encourage contributions tha
 
 2. **Create a Feature Branch**:
    - Use a descriptive name for your branch (e.g., `feature/add-login-validation`).
+   - If your work stems from a proposal in `conjectures/`, include the
+     conjecture filename in the branch name. This makes it easy to trace code
+     back to the idea that inspired it.
 
 3. **Write Tests**:
    - Add unit or integration tests for your changes.
@@ -37,6 +40,9 @@ Welcome to the Open Society Social Media project! We encourage contributions tha
 4. **Submit a Pull Request**:
    - Provide a clear description of your changes.
    - Reference related conjectures or critiques.
+   - Include a completed `templates/critique_template.md` summarising any
+     criticism and how it was addressed. Pull requests without this may be asked
+     to provide it before merging.
 
 ## Philosophy Alignment
 
