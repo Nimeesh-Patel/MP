@@ -45,6 +45,11 @@ This document provides specific instructions for coding agents to engage with th
 4. **Submit Changes**:
    - Follow the process outlined in `CONTRIBUTING.md`.
 
+5. **Stay Curious**:
+   - If you notice a gap or missing explanation, create a conjecture describing
+     the problem and a possible approach.
+   - Agents are welcome to open pull requests to explore these ideas.
+
 ## Philosophy Alignment
 
 Helpful: read `README.md`.
