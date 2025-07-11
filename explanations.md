@@ -15,3 +15,17 @@ registration or content moderation are approached as provisional solutions that
 may be replaced once we find better explanations. Recording those insights here
 helps new contributors understand the path of ideas.
 
+## The Role of Testing
+
+Automated tests serve as conjectures about how the code should behave. When
+a test fails, it acts as immediate criticism that guides us toward a better
+explanation or implementation. Maintaining even small test suites keeps the
+project improvable and documents expected behaviour for newcomers.
+
+## Configurable Token Expiry
+
+Access tokens are now created with a default expiry specified by the
+`TOKEN_MINUTES` environment variable. This grew out of the conjecture about
+shorter token lifetimes. Making the duration configurable lets us experiment
+with security versus convenience without changing code.
+
