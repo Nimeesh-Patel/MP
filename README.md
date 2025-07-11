@@ -19,6 +19,14 @@ criticism. We aim to build clear explanations for why the current code exists.
 See [`conjectures/`](conjectures/) for open proposals and
 [`explanations.md`](explanations.md) for reasoning that has survived criticism.
 
+## Philosophy
+
+Software design here is always tentative. Inspired by Popper's critical
+rationalism, each implementation choice is treated as a **conjecture** subject to
+criticism. We aim to build clear explanations for why the current code exists.
+See [`conjectures/`](conjectures/) for open proposals and
+[`explanations.md`](explanations.md) for reasoning that has survived criticism.
+
 ## Development Culture
 
 1. **Conjecture First** – New ideas or features begin as conjectures.  Create a
