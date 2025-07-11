@@ -49,6 +49,11 @@ cd src
 npm install
 $env:NODE_OPTIONS='--openssl-legacy-provider'; npm start
 ```
+
+## Environment Setup
+
+Copy `.env.example` to `.env` and adjust the values. At minimum set `JWT_SECRET` for token signing. Optionally set `TOKEN_MINUTES` to control the default expiry for access tokens.
+
 ## Running Tests
 
 Use `pytest` to run backend tests. See `TESTING.md` for more information.
