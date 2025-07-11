@@ -13,4 +13,3 @@ Adjustable expiry lets us experiment with trade-offs between convenience and sec
 ## Status
 Implemented. `create_access_token` now uses the `TOKEN_MINUTES` environment
 variable when no explicit expiry is given.
-
