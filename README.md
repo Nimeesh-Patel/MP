@@ -34,11 +34,8 @@ uvicorn app:app --reload
 # Frontend
 cd src
 npm install
-npm start
+$env:NODE_OPTIONS='--openssl-legacy-provider'; npm start
 ```
-
-Environment variables such as database URLs or secrets should be placed in a
-local `.env` file.
 
 ## License
 
