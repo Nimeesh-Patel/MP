@@ -18,22 +18,30 @@ rationalism, each implementation choice is treated as a **conjecture** subject t
 criticism. We aim to build clear explanations for why the current code exists.
 See [`conjectures/`](conjectures/) for open proposals and
 [`explanations.md`](explanations.md) for reasoning that has survived criticism.
+Ideas that were explored but ultimately rejected are logged in
+[`rejected-conjectures.md`](rejected-conjectures.md).
 
 ## Development Culture
 
 1. **Conjecture First** – New ideas or features begin as conjectures.  Create a
    markdown file under [`conjectures/`](conjectures/) describing the problem it
    tries to solve and any early reasoning.
-2. **Criticism is Collaboration** – Use the
+2. **Branches Reflect Conjectures** – When implementing a proposal, name the
+   branch after the corresponding file in `conjectures/` so it is clear which
+   idea the code relates to.
+3. **Criticism is Collaboration** – Use the
    [`templates/critique_template.md`](templates/critique_template.md) when
    reviewing or questioning a conjecture.  Good criticism proposes alternatives
    or highlights flaws so we can improve the explanation.
-3. **Evolving Explanations** – Significant insights are summarised in
+4. **Evolving Explanations** – Significant insights are summarised in
    [`explanations.md`](explanations.md).  This living document records how our
    understanding grows over time.
-4. **Reflect in the README** – When criticism leads to a fundamental change in
+5. **Reflect in the README** – When criticism leads to a fundamental change in
    direction, update this document so newcomers start from the latest
    perspective.
+6. **Critique Before Merge** – Pull requests should include a completed
+   `templates/critique_template.md` outlining raised concerns and how they were
+   addressed. This keeps the history of criticism transparent.
 
 ## Getting Started
 
