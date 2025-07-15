@@ -5,22 +5,21 @@ import Widgets from "./Widgets";
 import "./App.css";
 import Login from "./Login";
 import Signup from "./Signup";
+import Practice from "./Practice";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 function App() {
   return (
-    // BEM
-    <div className="app">
-      <Sidebar />
-      <Feed />
-      <Widgets />
-      {/* <Router>
+    <Router>
+      <div className="app">
+        <Sidebar />
         <Switch>
-          <Route exact path="/" component={Login} />
-          <Route path="/signup" component={Signup} />
+          <Route exact path="/" component={Feed} />
+          <Route path="/practice" component={Practice} />
         </Switch>
-      </Router> */}
-    </div>
+        <Widgets />
+      </div>
+    </Router>
   );
 }
 

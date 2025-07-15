@@ -11,6 +11,7 @@ import ListAltIcon from "@material-ui/icons/ListAlt";
 import PermIdentityIcon from "@material-ui/icons/PermIdentity";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 function Sidebar() {
   return (
@@ -22,7 +23,9 @@ function Sidebar() {
       <SidebarOption Icon={NotificationsNoneIcon} text="Notifications" />
       <SidebarOption Icon={MailOutlineIcon} text="Messages" />
       <SidebarOption Icon={BookmarkBorderIcon} text="Bookmarks" />
-      <SidebarOption Icon={ListAltIcon} text="Lists" />
+      <Link to="/practice" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <SidebarOption Icon={ListAltIcon} text="Practice" />
+      </Link>
       <SidebarOption Icon={PermIdentityIcon} text="Profile" />
       <SidebarOption Icon={MoreHorizIcon} text="More" />
 

@@ -1,0 +1,55 @@
+.practice {
+  flex: 0.5;
+  border-right: 1px solid #e6ecf0;
+  min-width: fit-content;
+  padding: 30px 20px;
+  background-color: #f5f8fa;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.practice h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+/* Tweet display styling */
+.tweet-card {
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 15px;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.tweet-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tweet-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tweet-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.tweet-username {
+  font-weight: 600;
+  font-size: 14px;
+  color: #14171a;
+}
+
+.tweet-text {
+  font-size: 15px;
+  color: #0f1419;
+  line-height: 1.4;
+  word-break: break-word;
+}
