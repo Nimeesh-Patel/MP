@@ -74,3 +74,45 @@ Conjecture: It would be useful to check out `AGENTS.md`.
 
 This project is released under the MIT License.  See [`LICENSE`](LICENSE) for
 details.
+
+## System Requirements for OCR (pytesseract)
+
+This project uses `pytesseract` (Python wrapper for Tesseract OCR) to extract text from images (e.g., memes or screenshots). You must install the Tesseract engine separately on your system.
+
+### 🪟 For Windows Users
+
+1. **Download Tesseract OCR** from:  
+   [https://github.com/UB-Mannheim/tesseract/wiki)
+
+2. **Install it** and **note the installation path**, e.g.:
+   ```
+   C:\Program Files\Tesseract-OCR\tesseract.exe
+   ```
+
+3. In your Python script (e.g. `clip_fake.py` or `clip_hate.py`), set the path:
+
+   ```python
+   import pytesseract
+   pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+   ```
+
+---
+
+## 🚀 Running the Model APIs
+
+### Run Fake News Classifier (CLIP + pytesseract)
+```bash
+uvicorn clip_fake:app --reload --port 8000
+```
+
+### Run Hate Speech Classifier (CLIP + pytesseract)
+```bash
+uvicorn clip_hate:app --reload --port 8001
+```
+
+These APIs accept an uploaded image and return:
+- Extracted text (via pytesseract)
+- Label (e.g. "fake" or "hateful")
+- Confidence score
+
+Make sure to run the correct FastAPI file based on the model type (fake/hate) before testing through the frontend.

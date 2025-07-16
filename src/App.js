@@ -6,6 +6,7 @@ import "./App.css";
 import Login from "./Login";
 import Signup from "./Signup";
 import Practice from "./Practice";
+import MultimodalTest from "./MultimodalTest"
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
         <Switch>
           <Route exact path="/" component={Feed} />
           <Route path="/practice" component={Practice} />
-        </Switch>
+          <Route path="/classifier" component={MultimodalTest} />       
+         </Switch>
         <Widgets />
       </div>
     </Router>

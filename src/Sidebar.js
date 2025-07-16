@@ -22,7 +22,9 @@ function Sidebar() {
       <SidebarOption Icon={SearchIcon} text="Explore" />
       <SidebarOption Icon={NotificationsNoneIcon} text="Notifications" />
       <SidebarOption Icon={MailOutlineIcon} text="Messages" />
-      <SidebarOption Icon={BookmarkBorderIcon} text="Bookmarks" />
+      <Link to='/classifier' style={{ textDecoration: 'none', color: 'inherit' }}>
+        <SidebarOption Icon={BookmarkBorderIcon} text="Practice Images" />
+      </Link>
       <Link to="/practice" style={{ textDecoration: 'none', color: 'inherit' }}>
         <SidebarOption Icon={ListAltIcon} text="Practice" />
       </Link>

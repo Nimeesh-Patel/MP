@@ -5,6 +5,7 @@ transformers
 motor
 pydantic[email]
 python-dotenv
-
 passlib
 python-jose
+pytesseract
+Pillow

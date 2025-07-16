@@ -1,0 +1,98 @@
+/* Container for the whole page */
+.feed {
+  flex: 0.5;
+  border-right: 1px solid var(--twitter-background);
+  background-color: #f5f8fa;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.feed__header {
+  position: sticky;
+  /* top: 0; */
+  margin-top: 0;
+  background-color: #fdfeff;
+  z-index: 100;
+  border-bottom: 1px solid #e6ecf0;
+  padding: 15px 20px;
+}
+
+.feed__header > h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+/* Form container */
+.tweetBox {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  padding: 6px 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.tweetBox h2{
+    text-align: center;    
+    margin-bottom: 20px;
+    top: 0;
+}
+/* Top section with avatar + dropdown */
+.tweetBox__top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+/* Avatar */
+.tweetBox__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+/* Dropdown menu */
+.tweetBox__dropdown {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  flex: 1;
+  background: transparent;
+}
+
+/* File input */
+.tweetBox__fileInput {
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  background-color: transparent;
+  margin-bottom: 12px;
+}
+
+/* Submit button */
+.tweetBox__tweetButton {
+  background-color: #1da1f2;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 25px;
+  padding: 10px 20px;
+  width: fit-content;
+  align-self: flex-end;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tweetBox__tweetButton:hover {
+  background-color: #1991da;
+}
+
+.tweetBox__tweetButton:disabled {
+  background-color: #a0d1f7;
+  cursor: not-allowed;
+}
