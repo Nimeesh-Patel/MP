@@ -11,6 +11,7 @@ function Practice() {
       try {
         const res = await fetch("http://localhost:8000/tweets");
         const data = await res.json();
+        console.log(data)
         setTweets(data.tweets || []);
       } catch (error) {
         console.error("Failed to load tweets:", error);
