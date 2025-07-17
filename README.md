@@ -45,18 +45,19 @@ Ideas that were explored but ultimately rejected are logged in
 
 ## Getting Started
 
-The backend runs with FastAPI and the frontend with React.  Basic commands:
+The backend runs with FastAPI and the frontend with React. To run the entire project (backend, CLIP models, and frontend) together, use:
 
-```bash
-# Backend
+```powershell
 pip install -r requirements.txt
-uvicorn app:app --reload
-
-# Frontend
-cd src
 npm install
-$env:NODE_OPTIONS='--openssl-legacy-provider'; npm start
+$env:NODE_OPTIONS="--openssl-legacy-provider"; npm run dev
 ```
+
+This command will start:
+- FastAPI backend (`app.py`) on port 8000
+- CLIP fake news model (`src/clip_fake.py`) on port 8001
+- CLIP hate speech model (`src/clip_hate.py`) on port 8002
+- React frontend on port 3000
 
 ## Environment Setup
 
@@ -72,8 +73,7 @@ Conjecture: It would be useful to check out `AGENTS.md`.
 
 ## License
 
-This project is released under the MIT License.  See [`LICENSE`](LICENSE) for
-details.
+This project is released under the MIT License.  See [`LICENSE`](LICENSE) for details.
 
 ## System Requirements for OCR (pytesseract)
 
@@ -98,16 +98,18 @@ This project uses `pytesseract` (Python wrapper for Tesseract OCR) to extract te
 
 ---
 
-## 🚀 Running the Model APIs
+## 🚀 Running the Model APIs (Manual)
+
+If you want to run the model APIs individually:
 
 ### Run Fake News Classifier (CLIP + pytesseract)
-```bash
-uvicorn clip_fake:app --reload --port 8000
+```powershell
+uvicorn src.clip_fake:app --reload --port 8001
 ```
 
 ### Run Hate Speech Classifier (CLIP + pytesseract)
-```bash
-uvicorn clip_hate:app --reload --port 8001
+```powershell
+uvicorn src.clip_hate:app --reload --port 8002
 ```
 
 These APIs accept an uploaded image and return:

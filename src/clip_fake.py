@@ -10,6 +10,11 @@ import pytesseract
 import numpy as np
 import io
 import os
+import logging
+
+# Logger setup
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Setup Tesseract path
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -25,8 +30,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load CLIP
+# Device setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+logger.info(f"Using device: {device}")
+
+# Load CLIP
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
 processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
@@ -37,9 +45,18 @@ classifier = nn.Sequential(
     nn.Linear(512, 2)
 ).to(device)
 
+# 🔁 Dynamic model path resolution
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(BASE_DIR, "../clip_models/clip_fakenews.pkl")
+
 # Load your trained weights
-classifier.load_state_dict(torch.load("../clip_models/clip_fakenews.pkl", map_location=device))
-classifier.eval()
+try:
+    classifier.load_state_dict(torch.load(model_path, map_location=device))
+    classifier.eval()
+    logger.info("✅ Fake News Classifier model loaded successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to load classifier weights: {e}")
+    raise
 
 def extract_text(image_pil):
     """Extract text from image using pytesseract"""
@@ -47,6 +64,7 @@ def extract_text(image_pil):
         text = pytesseract.image_to_string(image_pil, config='--psm 6')
         return text.strip() if text.strip() else "This is a news-related post or meme."
     except Exception as e:
+        logger.warning(f"OCR failed: {e}")
         return "This is a news-related post or meme."
 
 @app.post("/predict-fakenews")
@@ -59,6 +77,7 @@ async def predict_fakenews(image: UploadFile = File(...)):
 
         # OCR
         extracted_text = extract_text(image_pil)
+        logger.info(f"OCR Text: {extracted_text}")
 
         # CLIP processing
         inputs = processor(
@@ -78,7 +97,9 @@ async def predict_fakenews(image: UploadFile = File(...)):
             pred = torch.argmax(probs, dim=1).item()
 
         label = "real" if pred == 1 else "fake"
-        confidence = round(probs[0][pred].item(), 3)
+        confidence = round(probs[0][pred].item(), 4)
+
+        logger.info(f"Prediction: {label} ({confidence})")
 
         return JSONResponse(content={
             "label": label,
@@ -87,4 +108,5 @@ async def predict_fakenews(image: UploadFile = File(...)):
         })
 
     except Exception as e:
+        logger.error(f"API Error: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})

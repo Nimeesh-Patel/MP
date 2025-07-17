@@ -25,8 +25,8 @@ function MultimodalTest() {
     try {
       const endpoint =
         selectedModel === "fakenews"
-          ? "http://localhost:8000/predict-fakenews"
-          : "http://localhost:8001/classify";
+          ? "http://localhost:8001/predict-fakenews"
+          : "http://localhost:8002/classify";
 
       const res = await fetch(endpoint, {
         method: "POST",

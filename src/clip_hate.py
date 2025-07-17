@@ -50,9 +50,13 @@ classifier = nn.Sequential(
     nn.Softmax(dim=1)
 ).to(device)
 
+# ✅ Dynamically resolve model path
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(BASE_DIR, "../clip_models/hate_classifier.pt")
+
 # Load trained weights
 try:
-    classifier.load_state_dict(torch.load("../clip_models/hate_classifier.pt", map_location=device))
+    classifier.load_state_dict(torch.load(model_path, map_location=device))
     classifier.eval()
     logger.info("Classifier loaded successfully")
 except Exception as e:
@@ -77,7 +81,7 @@ def extract_text_with_ocr(pil_image):
     except Exception as e:
         logger.error(f"OCR error: {str(e)}")
         return "This is a social media post or meme"
-
+  
 def predict_hateful_meme(image, text):
     try:
         inputs = processor(
@@ -126,6 +130,8 @@ async def classify_meme(file: UploadFile = File(...)):
 async def health_check():
     return {"status": "healthy"}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main2:app", host="127.0.0.1", port=8000, reload=True)
+# ❌ REMOVE this block if you're not running this file directly.
+# You already run it via: uvicorn src.clip_hate:app --port 8002
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run("main2:app", host="127.0.0.1", port=8000, reload=True)
