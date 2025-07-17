@@ -53,3 +53,53 @@
   line-height: 1.4;
   word-break: break-word;
 }
+.tabs {
+  display: flex;
+  margin-bottom: 16px;
+  gap: 10px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #ddd;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.tabs button.active {
+  background-color: #1da1f2;
+  color: white;
+}
+
+.tweets-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.prediction-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.prediction-buttons button {
+  padding: 6px 12px;
+  border: none;
+  background-color: #eee;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.prediction-buttons button:hover {
+  background-color: #ccc;
+}
+
+.prediction-result {
+  margin-top: 8px;
+  font-weight: bold;
+  color: #1da1f2;
+}
