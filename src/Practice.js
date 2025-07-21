@@ -9,7 +9,7 @@ function Practice() {
   useEffect(() => {
     const fetchTweets = async () => {
       try {
-        const res = await fetch("http://localhost:8000/tweets");
+        const res = await fetch("http://localhost:8003/tweets");
         const data = await res.json();
         console.log(data);
         setTweets(data.tweets || []);
@@ -69,7 +69,7 @@ function TweetCard({ tweet }) {
   const handlePredict = async (label) => {
     setLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/predict", {
+      const res = await fetch("http://127.0.0.1:8003/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

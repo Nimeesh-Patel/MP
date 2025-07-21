@@ -12,9 +12,9 @@ function TweetBox({ addTweet }) {
     if (!tweetMessage.trim()) return;
 
     try {
-      // 🔗 Call your FastAPI backend
+      // 🔗 Call your LLaVA FastAPI backend
       const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
-      const response = await fetch(`${apiUrl}/predict`, {
+      const response = await fetch(`${apiUrl}/analyze-intention`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,20 +24,25 @@ function TweetBox({ addTweet }) {
 
       const data = await response.json();
 
-      // Optional: pass tweet to parent component
       if (addTweet) {
         addTweet({
           text: tweetMessage,
           image: tweetImage,
-          label: data.label,
+          label: data.label || "No label returned",
         });
       }
 
-      // Clear form
       setTweetMessage("");
       setTweetImage("");
     } catch (error) {
-      console.error("Prediction failed:", error);
+      console.error("LLaVA Prediction failed:", error);
+      if (addTweet) {
+        addTweet({
+          text: tweetMessage,
+          image: tweetImage,
+          label: "Prediction failed. Please try again.",
+        });
+      }
     }
   };
 
