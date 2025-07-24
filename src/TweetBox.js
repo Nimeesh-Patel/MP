@@ -5,16 +5,17 @@ import { Avatar, Button } from "@material-ui/core";
 function TweetBox({ addTweet }) {
   const [tweetMessage, setTweetMessage] = useState("");
   const [tweetImage, setTweetImage] = useState("");
+  const [loading, setLoading] = useState(false); // ⬅️ Loading state
 
   const sendTweet = async (e) => {
     e.preventDefault();
 
-    if (!tweetMessage.trim()) return;
+    if (!tweetMessage.trim() || loading) return;
+
+    setLoading(true); // ⛔ Disable button while processing
 
     try {
-      // 🔗 Call your LLaVA FastAPI backend
-      const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
-      const response = await fetch(`${apiUrl}/analyze-intention`, {
+      const response = await fetch("http://localhost:8000/analyze-intention", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +36,7 @@ function TweetBox({ addTweet }) {
       setTweetMessage("");
       setTweetImage("");
     } catch (error) {
-      console.error("LLaVA Prediction failed:", error);
+      console.error("Prediction failed:", error);
       if (addTweet) {
         addTweet({
           text: tweetMessage,
@@ -43,6 +44,8 @@ function TweetBox({ addTweet }) {
           label: "Prediction failed. Please try again.",
         });
       }
+    } finally {
+      setLoading(false); // ✅ Re-enable after response
     }
   };
 
@@ -65,8 +68,12 @@ function TweetBox({ addTweet }) {
           placeholder="Optional: Enter image URL"
           type="text"
         />
-        <Button type="submit" className="tweetBox__tweetButton">
-          Tweet
+        <Button
+          type="submit"
+          className="tweetBox__tweetButton"
+          disabled={loading}
+        >
+          {loading ? "Tweeting..." : "Tweet"}
         </Button>
       </form>
     </div>
