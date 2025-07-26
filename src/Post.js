@@ -8,17 +8,42 @@ import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import PublishIcon from "@material-ui/icons/Publish";
 
 const Post = forwardRef(
-  ({ displayName, username, verified, text, image, avatar, label }, ref) => {
+  ({ displayName, username, verified, text, image, avatar }, ref) => {
     const [showGrokModal, setShowGrokModal] = useState(false);
     const [animateGrok, setAnimateGrok] = useState(false);
+    const [grokResult, setGrokResult] = useState("");
+    const [loadingGrok, setLoadingGrok] = useState(false);
+    const [error, setError] = useState(null);
 
-    const handleGrokClick = () => {
+    const handleGrokClick = async () => {
       setShowGrokModal(true);
-      setTimeout(() => setAnimateGrok(true), 10); // trigger animation after mount
+      setTimeout(() => setAnimateGrok(true), 10);
+
+      // 🔁 Call Gemini API here
+      setLoadingGrok(true);
+      setError(null);
+      try {
+        const response = await fetch("http://localhost:8000/analyze-intention", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text }),
+        });
+
+        const data = await response.json();
+        setGrokResult(data.label || "No label returned");
+      } catch (err) {
+        console.error("Error fetching from Gemini API:", err);
+        setError("Failed to fetch prediction.");
+      } finally {
+        setLoadingGrok(false);
+      }
     };
+
     const handleGrokClose = () => {
       setAnimateGrok(false);
-      setTimeout(() => setShowGrokModal(false), 300); // allow animation to finish
+      setTimeout(() => setShowGrokModal(false), 300);
     };
 
     return (
@@ -40,13 +65,6 @@ const Post = forwardRef(
             <div className="post__headerDescription">
               <p>{text}</p>
             </div>
-            {/* Prediction label display */}
-            {label && (
-              <div className="tweetBox__result" style={{ marginTop: 8 }}>
-                Prediction: <strong>{label}</strong>
-              </div>
-            )}
-            {/* Grok button moved above tweet actions */}
             <div className="tweet__actions tweet__actions--top">
               <button
                 className="tweet__grokButton"
@@ -70,6 +88,7 @@ const Post = forwardRef(
               </button>
             </div>
           </div>
+
           <img src={image} alt="" />
           <div className="post__footer">
             <ChatBubbleOutlineIcon fontSize="small" />
@@ -77,6 +96,8 @@ const Post = forwardRef(
             <FavoriteBorderIcon fontSize="small" />
             <PublishIcon fontSize="small" />
           </div>
+
+          {/* GROK Modal */}
           {showGrokModal && (
             <div className="grokModalRightOverlay" onClick={handleGrokClose}>
               <div
@@ -87,13 +108,11 @@ const Post = forwardRef(
               >
                 <div className="grokModalHeader">
                   <span>More details</span>
-                  <button
-                    className="grokModalClose"
-                    onClick={handleGrokClose}
-                  >
+                  <button className="grokModalClose" onClick={handleGrokClose}>
                     &times;
                   </button>
                 </div>
+
                 <div className="grokModalContent">
                   <div className="grokModalTweet">
                     <Avatar src={avatar} style={{ marginRight: 8 }} />
@@ -108,17 +127,21 @@ const Post = forwardRef(
                   </div>
                   <hr style={{ margin: "12px 0" }} />
                   <div>
-                    {/* Example explanation, replace with actual analysis if available */}
-                    <ul>
-                      <li>
-                        This post's content will be analyzed and explained here.
-                      </li>
-                      {label && (
+                    {loadingGrok ? (
+                      <p>Analyzing with Gemini...</p>
+                    ) : error ? (
+                      <p style={{ color: "red" }}>{error}</p>
+                    ) : (
+                      <ul>
+                        <li>This post has been analyzed.</li>
                         <li>
-                          Prediction: <strong>{label}</strong>
+                          Prediction:{" "}
+                          <strong>
+                            {grokResult || "No prediction available"}
+                          </strong>
                         </li>
-                      )}
-                    </ul>
+                      </ul>
+                    )}
                   </div>
                 </div>
               </div>
