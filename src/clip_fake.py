@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
+from routes.fakenews_routes import router as FakeNewsRouter
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -29,6 +30,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(FakeNewsRouter)
 
 # Device setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

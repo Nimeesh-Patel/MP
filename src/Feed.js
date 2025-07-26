@@ -3,6 +3,7 @@ import TweetBox from "./TweetBox";
 import Post from "./Post";
 import "./Feed.css";
 import FlipMove from "react-flip-move";
+import Widgets from "./Widgets";
 
 function Feed() {
   // Local state for posts
@@ -45,7 +46,9 @@ function Feed() {
           />
         ))}
       </FlipMove>
+      {/* <Widgets/> */}
     </div>
+    
   );
 }
 

@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from routes.memes_routes import router as MemesRouter
 from PIL import Image
 import io
 import torch
@@ -32,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(MemesRouter)
 # Device config
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logger.info(f"🖥️ Using device: {device}")

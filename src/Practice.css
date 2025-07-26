@@ -1,58 +1,132 @@
+/* Base Layout Styles */
 .practice {
   flex: 0.5;
   border-right: 1px solid #e6ecf0;
-  min-width: fit-content;
-  padding: 30px 20px;
+  min-width: max-content;
+  padding: 0px 20px;
   background-color: #f5f8fa;
   height: 100vh;
   overflow-y: auto;
+  width: 100%;
+  display: flex;
 }
 
+.practice-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.content-section {
+  flex: 1;
+  padding: 25px;
+  width: 650px;
+}
+
+.game-header-section {
+  width: 300px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  z-index: 10;
+}
+
+/* Typography */
 .practice h2 {
   font-size: 24px;
   font-weight: 800;
   margin-bottom: 20px;
 }
 
-/* Tweet display styling */
-.tweet-card {
-  background-color: #ffffff;
-  border: 1px solid #e1e8ed;
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 15px;
-  transition: box-shadow 0.2s ease-in-out;
-}
-
-.tweet-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.tweet-header {
+/* Game Header Styles */
+.game-header {
+  border-bottom: 2px solid #ddd;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  /* margin-bottom: 1rem; */
+  border-radius: 12px;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  flex-direction: column;
+  flex: 0.3;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
 }
 
-.tweet-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+.game-header h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
 }
 
-.tweet-username {
+.score-container {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.score-box {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #212529;
+  padding: 1rem;
+  border-radius: 8px;
   font-weight: 600;
-  font-size: 14px;
-  color: #14171a;
+  font-size: 1rem;
+  text-align: center;
 }
 
-.tweet-text {
-  font-size: 15px;
-  color: #0f1419;
-  line-height: 1.4;
-  word-break: break-word;
+.gameover-box {
+  background-color: #f8f9fa;
+  border: 1px solid #c7ddff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
 }
+
+.gameover-box h3,p{
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+.try-again-btn,
+.game-over-message button {
+  padding: 8px 16px;
+  background-color: #3da0df;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.try-again-btn {
+  background-color: #1da1f2;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+}
+
+.try-again-btn:hover {
+  background-color: #1b90d8;
+}
+
+.game-over-message button:hover {
+  background-color: #1991db;
+}
+
+/* Tabs */
 .tabs {
   display: flex;
   margin-bottom: 16px;
@@ -74,11 +148,60 @@
   color: white;
 }
 
-.tweets-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Tweet Cards */
+.tweet-card {
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 15px;
+  transition: box-shadow 0.2s ease-in-out;
+  width: 100%;
 }
+
+.tweet-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tweet-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tweet-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.tweet-text {
+  font-size: 15px;
+  color: #0f1419;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* Image Display */
+.fixed-size-image {
+  max-width: 100%;
+  max-height: 400px;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  object-fit: contain;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Prediction Elements */
 .prediction-buttons {
   display: flex;
   gap: 8px;
@@ -92,14 +215,125 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s;
+  position: relative;
 }
 
 .prediction-buttons button:hover {
   background-color: #ccc;
 }
 
+.prediction-buttons button::after {
+  content: "+10";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: gold;
+  color: black;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.prediction-result-container {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+
 .prediction-result {
-  margin-top: 8px;
+  margin: 0;
+  font-size: 14px;
   font-weight: bold;
   color: #1da1f2;
+}
+
+/* Animations */
+.wrong-card {
+  border: 2px solid red;
+  animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* Content Section */
+.tweets-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Practice.css */
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.practice-container {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.content-section {
+  flex: 1;
+  min-width: 0; /* Allows flex item to shrink below content size */
+  overflow-y: auto;
+  padding-right: 20px;
+}
+
+.game-header-section {
+  width: 300px;
+  position: sticky;
+  top: 0;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Rest of your existing CSS remains the same */
+.tweet-card {
+  /* ... existing styles ... */
+  max-width: 600px;
+  margin: 0 auto 15px;
+}
+
+.tabs {
+  /* ... existing styles ... */
+  max-width: 600px;
+  margin: 0 auto 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1000px) {
+  .practice-container {
+    flex-direction: column;
+  }
+  
+  .game-header-section {
+    width: 100%;
+    height: auto;
+    position: static;
+    order: -1;
+    padding: 20px;
+  }
+  
+  .content-section {
+    padding-right: 0;
+  }
 }
