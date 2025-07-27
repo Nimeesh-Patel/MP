@@ -10,6 +10,7 @@ import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
 import ListAltIcon from "@material-ui/icons/ListAlt";
 import PermIdentityIcon from "@material-ui/icons/PermIdentity";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
 import { Button } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 
@@ -29,6 +30,9 @@ function Sidebar() {
       </Link>
       <Link to="/practice" style={{ textDecoration: 'none', color: 'inherit' }}>
         <SidebarOption Icon={ListAltIcon} text="Practice" />
+      </Link>
+      <Link to="/comments" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <SidebarOption Icon={ChatBubbleOutlineIcon} text="Comments Feed" />
       </Link>
       <SidebarOption Icon={PermIdentityIcon} text="Profile" />
       <SidebarOption Icon={MoreHorizIcon} text="More" />

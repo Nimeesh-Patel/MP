@@ -5,25 +5,7 @@ import "./Feed.css";
 import FlipMove from "react-flip-move";
 import Widgets from "./Widgets";
 
-function Feed() {
-  // Local state for posts
-  const [posts, setPosts] = useState([]);
-
-  // Function to add a new tweet
-  const addTweet = (tweet) => {
-    setPosts([
-      {
-        displayName: "Rafeh Qazi",
-        username: "cleverqazi",
-        verified: true,
-        avatar:
-          "https://kajabi-storefronts-production.global.ssl.fastly.net/kajabi-storefronts-production/themes/284832/settings_images/rLlCifhXRJiT0RoN2FjK_Logo_roundbackground_black.png",
-        ...tweet,
-      },
-      ...posts,
-    ]);
-  };
-
+function Feed({ posts, addTweet, addReply }) {
   return (
     <div className="feed">
       <div className="feed__header">
@@ -35,7 +17,7 @@ function Feed() {
       <FlipMove>
         {posts.map((post, idx) => (
           <Post
-            key={idx + post.text}
+            key={post.id || idx}
             displayName={post.displayName}
             username={post.username}
             verified={post.verified}
@@ -43,6 +25,9 @@ function Feed() {
             avatar={post.avatar}
             image={post.image}
             label={post.label} // Pass prediction label to Post
+            postId={post.id || idx} // Use unique ID if available, fallback to index
+            addReply={addReply}
+            originalPostId={post.id || idx}
           />
         ))}
       </FlipMove>

@@ -160,3 +160,284 @@
   gap: 8px;
   margin-bottom: 8px;
 }
+
+.commentModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.commentModal {
+  background: #181c20;
+  color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+  padding: 24px 32px 16px 32px;
+  min-width: 340px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.commentModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.commentModalClose {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 8px;
+}
+.commentModalUser {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.commentModalTextarea {
+  width: 100%;
+  min-height: 80px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #222;
+  color: #fff;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  resize: vertical;
+}
+.commentModalReplyBtn {
+  background: #1da1f2;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 24px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  align-self: flex-end;
+  transition: background 0.2s;
+}
+.commentModalReplyBtn:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+.post__commentButton {
+  background: none;
+  border: none;
+  padding: 0 8px 0 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.post__commentButton:hover {
+  transform: scale(1.1);
+}
+
+.post__commentButton:hover svg {
+  color: #1da1f2;
+}
+
+/* Debug styling for comment button */
+.post__commentButton:active {
+  transform: scale(0.95);
+}
+
+/* Replies Section Styles */
+.replies-section {
+  background: #fff;
+  border-top: 1px solid #e1e8ed;
+}
+
+.replies-section h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 16px 0;
+  padding: 0 16px;
+}
+
+/* Reply Post Styling */
+.post--reply {
+  background: #f8f9fa;
+  border-left: 4px solid #1da1f2;
+  margin: 0 16px;
+  border-radius: 0 8px 8px 0;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.post--reply:hover {
+  background: #f1f3f4;
+}
+
+.post--reply .post__avatar {
+  padding: 16px 20px;
+}
+
+.post--reply .post__body {
+  padding: 8px 10px 10px 0;
+}
+
+.post--reply .post__footer {
+  margin-top: 16px;
+}
+
+.post--reply .tweet__actions--top {
+  top: 8px;
+  right: 12px;
+}
+
+/* Visual connection line for nested replies */
+.post--reply::before {
+  content: '';
+  position: absolute;
+  left: 44px; /* Align with avatar center */
+  top: -8px;
+  width: 2px;
+  height: 8px;
+  background: #1da1f2;
+  opacity: 0.6;
+}
+
+/* Enhanced reply styling for better visual hierarchy */
+.post--reply .post__headerDescription p {
+  font-size: 15px;
+  line-height: 1.4;
+  color: #222;
+}
+
+.post--reply .post__footer button {
+  color: #8899a6;
+  transition: color 0.2s ease;
+}
+
+.post--reply .post__footer button:hover {
+  color: #1da1f2;
+}
+
+/* Reply counter styling */
+.replies-section h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 16px 0;
+  padding: 16px 16px 8px 16px;
+  border-bottom: 1px solid #e1e8ed;
+  background: #fff;
+}
+
+/* Comments Feed Styling */
+.post--comment-feed {
+  border: 1px solid #e1e8ed;
+  margin: 8px 0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.post--comment-feed:hover {
+  background: #f8f9fa;
+}
+
+.comment-feed-item {
+  border-bottom: 1px solid #e1e8ed;
+}
+
+.comment-feed-item:last-child {
+  border-bottom: none;
+}
+
+.original-post-context {
+  transition: background-color 0.2s ease;
+}
+
+.original-post-context:hover {
+  background: #f1f3f4 !important;
+}
+
+.original-post-context button:hover {
+  color: #1a8cd8 !important;
+}
+
+/* Enhanced styling for comments in feed */
+.post--comment-feed .post__body {
+  padding: 12px 16px;
+}
+
+.post--comment-feed .post__avatar {
+  padding: 12px 16px;
+}
+
+.post--comment-feed .post__footer {
+  padding: 0 16px 12px 16px;
+}
+
+/* Post on its own page styling */
+.post--on-post-page {
+  cursor: default !important;
+}
+
+.post--on-post-page .post__body {
+  pointer-events: none;
+  cursor: default;
+}
+
+.post--on-post-page .post__footer,
+.post--on-post-page .tweet__actions,
+.post--on-post-page .tweet__grokButton {
+  pointer-events: auto;
+}
+
+.post--on-post-page .post__commentButton {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.post--on-post-page:hover {
+  background: transparent;
+}
+
+/* Reply Input Enhancement */
+.reply-input-section {
+  background: #fff;
+  border-bottom: 1px solid #e1e8ed;
+  padding: 16px;
+}
+
+.reply-input-section textarea {
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  transition: border-color 0.2s ease;
+}
+
+.reply-input-section textarea:focus {
+  outline: none;
+  border-color: #1da1f2;
+  box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.1);
+}
+
+.reply-button {
+  transition: all 0.2s ease;
+}
+
+.reply-button:hover:not(:disabled) {
+  background: #1a8cd8 !important;
+  transform: translateY(-1px);
+}
