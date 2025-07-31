@@ -1,5 +1,3 @@
-# database/mongo.py
-
 import motor.motor_asyncio
 import os
 from dotenv import load_dotenv
@@ -7,14 +5,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Connect to MongoDB Atlas using environment variable
-client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGO_URL"))
-print("MONGO_URL:", os.getenv("MONGO_URL"))
+MONGO_URL = os.getenv("MONGO_URL")
+if not MONGO_URL:
+    raise ValueError("MONGO_URL environment variable not set")
 
-# Use 'tweet_db' database
+client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
+print("Connected to MongoDB successfully ")
+
+# Use 'major_project_db' database
 db = client["major_project_db"]
 
-# Use 'tweets_collection' collection
+# Collections
 tweet_collection = db.get_collection("tweets_collection")
 fakenews_collection = db.get_collection("fakeNews_images")
 memes_collection = db.get_collection("hateful_memes")
 user_collection = db.get_collection("users")
+
+# Optional helper
+def get_db():
+    return db

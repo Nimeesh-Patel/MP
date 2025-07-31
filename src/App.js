@@ -87,12 +87,14 @@ function App() {
     <div className="app">
     <Router>
       <Sidebar />
-      <Switch>
+      {/* <Switch> */}
         <Route exact path="/">
           <Feed posts={posts} addTweet={addTweet} addReply={addReply} />
           <Widgets />          
         </Route>
         <Route path="/practice" component={Practice} />
+        <Route path="/signup" component={Signup} />
+        <Route path="/login" component={Login} />
         <Route path="/classifier" component={MultimodalTest} />
         <Route path="/comments" render={(props) => (
           <CommentsFeed 
@@ -109,7 +111,7 @@ function App() {
             addReply={addReply}
           />
         )} />
-      </Switch>
+      {/* </Switch> */}
     </Router>
     </div>
     </>

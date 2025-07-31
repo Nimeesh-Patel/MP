@@ -1,10 +1,9 @@
-# routes/auth_routes.py
 from fastapi import APIRouter, HTTPException, status
 from models.user import UserRegister, UserLogin
 from database.mongo import user_collection
 from auth.utils import hash_password, verify_password, create_access_token
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/register")
 async def register(user: UserRegister):
@@ -14,6 +13,7 @@ async def register(user: UserRegister):
 
     user_data = user.dict()
     user_data["password"] = hash_password(user.password)
+    user_data["tweets"] = []  # initialize empty tweet list
 
     await user_collection.insert_one(user_data)
     return {"message": "User registered successfully"}
@@ -24,5 +24,5 @@ async def login(user: UserLogin):
     if not db_user or not verify_password(user.password, db_user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_access_token({"sub": db_user["email"]})
+    token = create_access_token({"sub": db_user["email"], "id": str(db_user["_id"])})
     return {"access_token": token, "token_type": "bearer"}

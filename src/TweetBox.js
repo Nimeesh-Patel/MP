@@ -6,23 +6,46 @@ function TweetBox({ addTweet }) {
   const [tweetMessage, setTweetMessage] = useState("");
   const [tweetImage, setTweetImage] = useState("");
 
-  const sendTweet = async (e) => {
-    e.preventDefault();
+const sendTweet = async (e) => {
+  e.preventDefault();
 
-    if (!tweetMessage.trim()) return;
+  if (!tweetMessage.trim()) return;
 
-    // Just create a new tweet without calling Gemini
+  try {
+    const response = await fetch("http://localhost:8003/tweets/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Make sure you have the JWT stored here
+      },
+      body: JSON.stringify({
+        content: tweetMessage,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Failed to post tweet");
+    }
+
     if (addTweet) {
       addTweet({
         text: tweetMessage,
         image: tweetImage,
-        label: null, // No label yet
+        label: null,
+        id: data.tweet_id,
       });
     }
 
     setTweetMessage("");
     setTweetImage("");
-  };
+  } catch (error) {
+    console.error("Tweet error:", error.message);
+    alert("Failed to send tweet: " + error.message);
+  }
+};
+
 
   return (
     <div className="tweetBox">
