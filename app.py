@@ -1,43 +1,48 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 
 # ✅ Routers
 from routes.auth_routes import router as AuthRouter
-from routes.tweet_routes import router as TweetRouter  # ✅ Import tweet router
+from routes.tweet_routes import router as TweetRouter
+from routes.news import router as NewsRouter
 
+# ✅ FastAPI app initialization
 app = FastAPI()
 
-# ✅ Enable CORS
+# ✅ Enable CORS (for frontend communication)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # In production, set allowed domains only
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ✅ Load BERT model and tokenizer
-model_path = "bert_model"  # Ensure this path is correct
+model_path = "bert_model"  # Make sure this folder contains config.json, pytorch_model.bin, vocab.txt, etc.
 tokenizer = BertTokenizer.from_pretrained(model_path)
 model = BertForSequenceClassification.from_pretrained(model_path)
 model.eval()
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-# ✅ Pydantic model for POST /predict
+# ✅ Define request schema
 class TweetText(BaseModel):
     text: str
 
-# ✅ Include routers
+# ✅ Register routers
 app.include_router(AuthRouter)
-app.include_router(TweetRouter)  # 👈 This registers /tweets endpoint
+app.include_router(TweetRouter)
+app.include_router(NewsRouter)
 
-# ✅ Endpoint for prediction using BERT
+# ✅ Prediction endpoint
 @app.post("/predict")
 def predict_tweet(tweet: TweetText):
     inputs = tokenizer(tweet.text, return_tensors="pt", padding=True, truncation=True).to(device)
+    
     with torch.no_grad():
         outputs = model(**inputs)
         prediction = torch.argmax(outputs.logits, dim=1).item()

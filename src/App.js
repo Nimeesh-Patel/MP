@@ -6,7 +6,7 @@ import "./App.css";
 import Login from "./Login";
 import Signup from "./Signup";
 import Practice from "./Practice";
-import MultimodalTest from "./MultimodalTest"
+import MultimodalTest from "./MultimodalTest";
 import PostPage from "./PostPage";
 import CommentsFeed from "./CommentsFeed";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
@@ -17,6 +17,7 @@ function App() {
   const [replies, setReplies] = useState({}); // Track replies for each post
   const [commentsFeed, setCommentsFeed] = useState([]); // Track all comments for feed
   const [nextPostId, setNextPostId] = useState(1000); // Start with a high number to avoid conflicts
+  const [comments, setComments] = useState({}); // <-- Add this line
 
   // Migration function to ensure all posts have IDs
   const ensurePostIds = (postsArray) => {
@@ -30,9 +31,9 @@ function App() {
 
   const addTweet = (tweet) => {
     const newPostId = nextPostId;
-    setNextPostId(prev => prev + 1);
-    
-    setPosts(prevPosts => {
+    setNextPostId((prev) => prev + 1);
+
+    setPosts((prevPosts) => {
       const updatedPosts = [
         {
           id: newPostId, // Add unique ID to each post
@@ -45,7 +46,7 @@ function App() {
         },
         ...prevPosts,
       ];
-      
+
       // Ensure all posts have IDs
       return ensurePostIds(updatedPosts);
     });
@@ -67,53 +68,69 @@ function App() {
     };
 
     // Add to replies for specific post
-    setReplies(prevReplies => ({
+    setReplies((prevReplies) => ({
       ...prevReplies,
-      [postId]: [
-        newReply,
-        ...(prevReplies[postId] || []),
-      ],
+      [postId]: [newReply, ...(prevReplies[postId] || [])],
     }));
 
     // Add to comments feed for general viewing
-    setCommentsFeed(prevComments => [
-      newReply,
-      ...prevComments,
-    ]);
+    setCommentsFeed((prevComments) => [newReply, ...prevComments]);
+  };
+
+  // Add this function to handle comments
+  const addComment = (postId, commentText) => {
+    setComments((prev) => ({
+      ...prev,
+      [postId]: [...(prev[postId] || []), commentText],
+    }));
   };
 
   return (
     <>
-    <div className="app">
-    <Router>
-      <Sidebar />
-      {/* <Switch> */}
-        <Route exact path="/">
-          <Feed posts={posts} addTweet={addTweet} addReply={addReply} />
-          <Widgets />          
-        </Route>
-        <Route path="/practice" component={Practice} />
-        <Route path="/signup" component={Signup} />
-        <Route path="/login" component={Login} />
-        <Route path="/classifier" component={MultimodalTest} />
-        <Route path="/comments" render={(props) => (
-          <CommentsFeed 
-            {...props} 
-            commentsFeed={commentsFeed}
-            posts={posts}
+      <div className="app">
+        <Router>
+          <Sidebar />
+          {/* <Switch> */}
+          <Route exact path="/">
+            <Feed
+              posts={posts}
+              addTweet={addTweet}
+              addReply={addReply}
+              comments={comments} // <-- Pass comments
+              addComment={addComment} // <-- Pass addComment
+            />
+            <Widgets />
+          </Route>
+          <Route path="/practice" component={Practice} />
+          <Route path="/signup" component={Signup} />
+          <Route path="/login" component={Login} />
+          <Route path="/classifier" component={MultimodalTest} />
+          <Route
+            path="/comments"
+            render={(props) => (
+              <CommentsFeed
+                {...props}
+                commentsFeed={commentsFeed}
+                posts={posts}
+              />
+            )}
           />
-        )} />
-        <Route path="/post/:postId" render={(props) => (
-          <PostPage 
-            {...props} 
-            posts={posts} 
-            replies={replies}
-            addReply={addReply}
+          <Route
+            path="/post/:postId"
+            render={(props) => (
+              <PostPage
+                {...props}
+                posts={posts}
+                replies={replies}
+                addReply={addReply}
+                comments={comments} // <-- Pass comments object
+                addComment={addComment} // <-- Pass addComment
+              />
+            )}
           />
-        )} />
-      {/* </Switch> */}
-    </Router>
-    </div>
+          {/* </Switch> */}
+        </Router>
+      </div>
     </>
   );
 }

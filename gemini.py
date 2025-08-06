@@ -29,10 +29,24 @@ class TweetText(BaseModel):
 @app.post("/analyze-intention")
 def analyze_intention(tweet: TweetText):
     prompt = f"""
-Analyze the following content and form a theory about the intention of the person behind it through Popperian epistemology and Deutschian Explanation. Keep your explanations concise, precise, and pithy.
+Read the following content with a fallibilist lens.
+Your task is to extract all distinct ideas, conjectures, or criticisms from the text — even if they’re mixed with emotional or messy language.
 
-Template:
-"[the 'unit vector description' of the intention (good, bad, regressive, open, closed, etc)] + intention: [your explanation of 10 words more or less regarding that]"
+For each idea you identify:
+
+1. Strip away emotional bias, hate speech, or insults.
+2. Restate the idea as a clear conjecture, criticism, or general claim, using roughly the same number of words.
+3. If multiple separate claims exist, list them separately.
+
+💡 Be bold: even rants or offensive statements can hide real testable theories.
+❌ Do not include surface-level noise or name-calling.
+✅ Focus on clarity and truth-seeking.
+
+Output format:
+
+criticism: [restated claim 1]  
+criticism: [restated claim 2]  
+conjecture/idea: [restated claim 3, etc.]
 
 Text:
 \"\"\"{tweet.text}\"\"\"

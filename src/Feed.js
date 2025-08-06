@@ -1,11 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TweetBox from "./TweetBox";
 import Post from "./Post";
 import "./Feed.css";
 import FlipMove from "react-flip-move";
-import Widgets from "./Widgets";
 
-function Feed({ posts, addTweet, addReply }) {
+function Feed({ posts, addTweet, addReply, comments, addComment }) {
+  const [newsPosts, setNewsPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await fetch("http://localhost:8003/news");
+        const data = await res.json();
+        const formattedNews = data.headlines.map((article, idx) => ({
+          id: `news-${idx}`,
+          displayName: article.source.name || "News Source",
+          username: article.author || "NewsBot",
+          verified: true,
+          text: article.title,
+          avatar: "https://cdn-icons-png.flaticon.com/512/21/21601.png", // 📰 or random
+          image: article.urlToImage || null,
+          label: "News",
+        }));
+        setNewsPosts(formattedNews);
+      } catch (error) {
+        console.error("Failed to load news", error);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  const allPosts = [...newsPosts, ...posts];
+
   return (
     <div className="feed">
       <div className="feed__header">
@@ -15,7 +42,7 @@ function Feed({ posts, addTweet, addReply }) {
       <TweetBox addTweet={addTweet} />
 
       <FlipMove>
-        {posts.map((post, idx) => (
+        {allPosts.map((post, idx) => (
           <Post
             key={post.id || idx}
             displayName={post.displayName}
@@ -24,17 +51,18 @@ function Feed({ posts, addTweet, addReply }) {
             text={post.text}
             avatar={post.avatar}
             image={post.image}
-            label={post.label} // Pass prediction label to Post
-            postId={post.id || idx} // Use unique ID if available, fallback to index
+            label={post.label}
+            postId={post.id || idx}
             addReply={addReply}
             originalPostId={post.id || idx}
+            comments={comments[post.id || idx] || []} // Use lifted comments
+            addComment={addComment}                   // Use lifted addComment
           />
         ))}
       </FlipMove>
-      {/* <Widgets/> */}
     </div>
-    
   );
 }
 
 export default Feed;
+// 
