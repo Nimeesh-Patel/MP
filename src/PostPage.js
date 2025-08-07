@@ -5,11 +5,11 @@ import { Avatar } from "@material-ui/core";
 import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import "./Post.css";
 
-function PostPage({ posts, replies, addReply }) {
+function PostPage({ posts, newsPosts = [], replies, addReply }) {
   const { postId } = useParams();
   const history = useHistory();
-  // Find the post by unique postId instead of array index
-  const post = posts.find(p => p.id === parseInt(postId, 10));
+  // Find the post by unique postId in both posts and newsPosts
+  const post = (posts.find(p => String(p.id) === postId) || newsPosts.find(p => String(p.id) === postId));
   const [commentText, setCommentText] = useState("");
   
   const handleCommentSubmit = (e) => {
@@ -106,4 +106,4 @@ function PostPage({ posts, replies, addReply }) {
   );
 }
 
-export default PostPage; 
+export default PostPage;

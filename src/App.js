@@ -93,6 +93,8 @@ function App() {
           <Widgets />          
         </Route>
         <Route path="/practice" component={Practice} />
+        <Route path="/signup" component={Signup} />
+        <Route path="/login" component={Login} />
         <Route path="/classifier" component={MultimodalTest} />
         <Route path="/comments" render={(props) => (
           <CommentsFeed 
