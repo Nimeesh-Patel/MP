@@ -9,7 +9,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import { useHistory } from "react-router-dom";
 
 const Post = forwardRef(
-  ({ displayName, username, verified, text, image, avatar, postId, isReply = false, addReply, originalPostId, isCommentFeed = false, isOnPostPage = false }, ref) => {
+  ({ displayName, username, verified, text, image, avatar, postId, isReply = false, addReply, originalPostId, isCommentFeed = false, isOnPostPage = false, hideCommentButton = false }, ref) => {
     const [showGrokModal, setShowGrokModal] = useState(false);
     const [animateGrok, setAnimateGrok] = useState(false);
     const [grokResult, setGrokResult] = useState("");
@@ -63,19 +63,12 @@ const Post = forwardRef(
     
     const handleCommentSubmit = (e) => {
       e.preventDefault();
-      
-      if (commentText.trim() && addReply && originalPostId) {
-        // If this is a reply post, add a reply to the reply
-        addReply(originalPostId, commentText, postId);
-        setShowCommentModal(false);
-        setCommentText("");
-      } else if (commentText.trim() && addReply && postId) {
-        // If this is a main post in the feed, add a reply to the post
+      if (commentText.trim() && addReply && postId) {
+        // Always add reply to the currently viewed post/reply
         addReply(postId, commentText);
         setShowCommentModal(false);
         setCommentText("");
       } else {
-        // Fallback for when addReply is not available
         setShowCommentModal(false);
         setCommentText("");
       }
@@ -146,9 +139,11 @@ const Post = forwardRef(
 
           <img src={image} alt="" />
           <div className="post__footer">
-            <button className="post__commentButton" onClick={handleCommentClick} title="Comment">
-              <ChatBubbleOutlineIcon fontSize="small" />
-            </button>
+            {!hideCommentButton && (
+              <button className="post__commentButton" onClick={handleCommentClick} title="Comment">
+                <ChatBubbleOutlineIcon fontSize="small" />
+              </button>
+            )}
             <RepeatIcon fontSize="small" />
             <FavoriteBorderIcon fontSize="small" />
             <PublishIcon fontSize="small" />

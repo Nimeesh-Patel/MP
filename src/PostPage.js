@@ -8,14 +8,26 @@ import "./Post.css";
 function PostPage({ posts, replies, addReply }) {
   const { postId } = useParams();
   const history = useHistory();
-  // Find the post by unique postId instead of array index
-  const post = posts.find(p => p.id === parseInt(postId, 10));
+  // Find the post by unique postId in posts or in replies
+  const postIdNum = parseInt(postId, 10);
+  let post = posts.find(p => p.id === postIdNum);
+  if (!post) {
+    // Search all replies for a matching id
+    for (const replyArr of Object.values(replies)) {
+      const found = replyArr.find(r => r.id === postIdNum);
+      if (found) {
+        post = found;
+        break;
+      }
+    }
+  }
   const [commentText, setCommentText] = useState("");
-  
+
+  // Always add reply to the currently viewed post/reply
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     if (commentText.trim() && post) {
-      addReply(post.id, commentText);
+      addReply(post.id, commentText); // This will add reply to the correct post/reply
       setCommentText("");
     }
   };
@@ -40,7 +52,7 @@ function PostPage({ posts, replies, addReply }) {
         <button onClick={() => history.goBack()} style={{ background: 'none', border: 'none', color: '#1da1f2', fontSize: 24, cursor: 'pointer', marginRight: 8 }}>&larr;</button>
         <h2 style={{ display: 'inline', color: '#222' }}>Post</h2>
       </div>
-      <Post {...post} postId={post.id} addReply={addReply} originalPostId={post.id} isOnPostPage={true} />
+      <Post {...post} postId={post.id} addReply={addReply} originalPostId={post.id} isOnPostPage={true} hideCommentButton={true} />
       
       {/* Reply Input Section */}
       <form onSubmit={handleCommentSubmit} className="reply-input-section">
@@ -81,14 +93,19 @@ function PostPage({ posts, replies, addReply }) {
             Replies ({postReplies.length})
           </h3>
           {postReplies.map((reply, index) => (
-            <Post 
+            <div
               key={reply.id || index}
-              {...reply}
-              postId={`reply-${reply.id || index}`}
-              isReply={true}
-              addReply={addReply}
-              originalPostId={post.id}
-            />
+              style={{ cursor: "pointer" }}
+              onClick={() => history.push(`/post/${reply.id}`)}
+            >
+              <Post 
+                {...reply}
+                postId={reply.id}
+                isReply={true}
+                addReply={addReply}
+                originalPostId={post.id}
+              />
+            </div>
           ))}
         </div>
       ) : (
@@ -106,4 +123,4 @@ function PostPage({ posts, replies, addReply }) {
   );
 }
 
-export default PostPage; 
+export default PostPage;
