@@ -1,46 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import Post from "./Post";
 import { Avatar } from "@material-ui/core";
 import "./Post.css";
 
-function PostPage({ posts }) {
+function PostPage({ posts = [], redditPosts = [], replies = {}, addReply }) {
   const { postId } = useParams();
   const history = useHistory();
 
-  const postIdNum = parseInt(postId, 10);
-  let post = posts.find(p => p.id === postIdNum);
-
-  const [replies, setReplies] = useState({});
+  // ✅ Replies are stored only in memory (not persisted)
+  const [localReplies, setLocalReplies] = useState({});
   const [commentText, setCommentText] = useState("");
   const [commentTag, setCommentTag] = useState("refinement");
   const [filterTag, setFilterTag] = useState("all");
 
-  // ✅ Load replies from localStorage on mount
-  useEffect(() => {
-    const storedReplies = localStorage.getItem("replies");
-    if (storedReplies) {
-      setReplies(JSON.parse(storedReplies));
-    }
-  }, []);
-
-  // ✅ Save replies to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("replies", JSON.stringify(replies));
-  }, [replies]);
-
-  // 🔍 In case the post is itself a reply
-  if (!post) {
-    for (const replyArr of Object.values(replies)) {
-      const found = replyArr.find(r => r.id === postIdNum);
-      if (found) {
-        post = found;
-        break;
-      }
-    }
-  }
-
-  const addReply = (postId, replyObject) => {
+  // Use provided replies if available, otherwise use local state
+  const effectiveReplies = Object.keys(replies).length > 0 ? replies : localReplies;
+  const effectiveAddReply = addReply || ((postId, replyObject) => {
     const newReply = {
       id: replyObject.id || Date.now(),
       text: replyObject.text,
@@ -48,52 +24,80 @@ function PostPage({ posts }) {
       avatar: replyObject.avatar || "/default_avatar.png",
       displayName: replyObject.displayName || "Anonymous",
       username: replyObject.username || "user123",
-      verified: replyObject.verified || false
+      verified: replyObject.verified || false,
     };
 
-    setReplies(prevReplies => {
-      const updatedReplies = {
-        ...prevReplies,
-        [postId]: [...(prevReplies[postId] || []), newReply]
-      };
-      return updatedReplies;
-    });
-  };
+    setLocalReplies((prevReplies) => ({
+      ...prevReplies,
+      [postId]: [...(prevReplies[postId] || []), newReply],
+    }));
+  });
 
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    if (commentText.trim() && post) {
-      const replyWithTag = {
-        text: commentText,
-        tag: commentTag,
-        avatar: "/default_avatar.png",
-        displayName: "Anonymous",
-        username: "user123",
-        verified: false,
-        id: Date.now()
-      };
-      addReply(post.id, replyWithTag);
-      setCommentText("");
-      setCommentTag("refinement");
+  // Combine all possible post sources
+  const allPosts = [...posts, ...redditPosts];
+  
+  // Find the post in regular posts, reddit posts, or replies
+  let post = allPosts.find(p => String(p.id) === String(postId));
+
+  // If not found, check replies
+  if (!post) {
+    for (const replyArr of Object.values(effectiveReplies)) {
+      const found = replyArr.find(r => String(r.id) === String(postId));
+      if (found) {
+        post = found;
+        break;
+      }
     }
-  };
+  }
 
+  // ✅ If post doesn't exist
   if (!post) {
     return (
       <div className="feed">
         <div className="feed__header">
-          <button onClick={() => history.goBack()} style={{ background: 'none', border: 'none', color: '#1da1f2', fontSize: 24, cursor: 'pointer', marginRight: 8 }}>&larr;</button>
-          <h2 style={{ display: 'inline', color: '#222' }}>Post</h2>
+          <button
+            onClick={() => history.goBack()}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#1da1f2",
+              fontSize: 24,
+              cursor: "pointer",
+              marginRight: 8,
+            }}
+          >
+            &larr;
+          </button>
+          <h2 style={{ display: "inline", color: "#222" }}>Post</h2>
         </div>
-        <div style={{ padding: 32, color: '#888' }}>Post not found.</div>
+        <div style={{ padding: 32, color: "#888" }}>Post not found.</div>
       </div>
     );
   }
 
-  const allReplies = replies[post.id] || [];
+  // ✅ Filter replies by tag
+  const allReplies = effectiveReplies[post.id] || [];
   const filteredReplies =
-    filterTag === "all" ? allReplies : allReplies.filter(r => r.tag === filterTag);
+    filterTag === "all"
+      ? allReplies
+      : allReplies.filter((r) => r.tag === filterTag);
 
+  const handleCommentSubmit = (e) => {
+  e.preventDefault();
+  if (commentText.trim() && post) {
+    effectiveAddReply(String(post.id), {
+      text: commentText,
+      tag: commentTag,
+      avatar: "/default_avatar.png",
+      displayName: "Anonymous",
+      username: "user123",
+      verified: false,
+      id: Date.now()
+    });
+    setCommentText("");
+    setCommentTag("refinement");
+  }
+};
   return (
     <div className="feed">
       <div className="feed__header">
