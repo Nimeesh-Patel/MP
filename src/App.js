@@ -15,11 +15,10 @@ function App() {
   // Lift posts state up
   const [posts, setPosts] = useState([]);
   const [redditPosts,setRedditPosts] = useState([])
-  const [replies, setReplies] = useState({}); // Track replies for each post
-  const [commentsFeed, setCommentsFeed] = useState([]); // Track all comments for feed
-  const [nextPostId, setNextPostId] = useState(1000); // Start with a high number to avoid conflicts
+  const [replies, setReplies] = useState({});
+  const [commentsFeed, setCommentsFeed] = useState([]);
+  const [nextPostId, setNextPostId] = useState(1000);
 
-  // Migration function to ensure all posts have IDs
   const ensurePostIds = (postsArray) => {
     return postsArray.map((post, index) => {
       if (!post.id) {
@@ -36,7 +35,7 @@ function App() {
     setPosts(prevPosts => {
       const updatedPosts = [
         {
-          id: newPostId, // Add unique ID to each post
+          id: newPostId,
           displayName: "Rafeh Qazi",
           username: "cleverqazi",
           verified: true,
@@ -46,8 +45,6 @@ function App() {
         },
         ...prevPosts,
       ];
-      
-      // Ensure all posts have IDs
       return ensurePostIds(updatedPosts);
     });
   };
@@ -63,58 +60,73 @@ function App() {
       text: reply,
       timestamp: new Date().toISOString(),
       id: replyId,
-      parentReplyId: parentReplyId, // Track if this is a reply to a reply
-      originalPostId: postId, // Track which post this reply belongs to
+      parentReplyId: parentReplyId,
+      originalPostId: postId,
     };
 
-    // Add to replies for specific post
     setReplies(prevReplies => ({
       ...prevReplies,
-      [postId]: [
-        newReply,
-        ...(prevReplies[postId] || []),
-      ],
+      [postId]: [newReply, ...(prevReplies[postId] || [])],
     }));
 
-    // Add to comments feed for general viewing
-    setCommentsFeed(prevComments => [
-      newReply,
-      ...prevComments,
-    ]);
+    setCommentsFeed(prevComments => [newReply, ...prevComments]);
   };
 
   return (
-    <>
     <div className="app">
-    <Router>
-      <Sidebar />
-      <Switch>
-        <Route exact path="/">
-          <Feed posts={posts} addTweet={addTweet} addReply={addReply} redditPosts={redditPosts} setRedditPosts={setRedditPosts}/>
-          <Widgets />          
-        </Route>
-        <Route path="/practice" component={Practice} />
-        <Route path="/classifier" component={MultimodalTest} />
-        <Route path="/comments" render={(props) => (
-          <CommentsFeed 
-            {...props} 
-            commentsFeed={commentsFeed}
-            posts={posts}
-          />
-        )} />
-        <Route path="/post/:postId" render={(props) => (
-          <PostPage 
-            {...props} 
-            posts={posts} 
-            redditPosts={redditPosts}
-            replies={replies}
-            addReply={addReply}
-          />
-        )} />
-      </Switch>
-    </Router>
+      <Router>
+        <Sidebar />
+        <Switch>
+          {/* Main Feed */}
+          <Route exact path="/">
+            <Feed 
+              posts={posts} 
+              addTweet={addTweet} 
+              addReply={addReply} 
+              redditPosts={redditPosts} 
+              setRedditPosts={setRedditPosts} 
+            />
+            <Widgets />          
+          </Route>
+
+          {/* Login Page (no Widgets) */}
+          <Route path="/login">
+            <Login />
+          </Route>
+
+          {/* Signup Page (no Widgets) */}
+          <Route path="/signup">
+            <Signup />
+          </Route>
+
+          {/* Practice */}
+          <Route path="/practice" component={Practice} />
+
+          {/* Classifier */}
+          <Route path="/classifier" component={MultimodalTest} />
+
+          {/* Comments Feed */}
+          <Route path="/comments" render={(props) => (
+            <CommentsFeed 
+              {...props} 
+              commentsFeed={commentsFeed}
+              posts={posts}
+            />
+          )} />
+
+          {/* Post Page */}
+          <Route path="/post/:postId" render={(props) => (
+            <PostPage 
+              {...props} 
+              posts={posts} 
+              redditPosts={redditPosts}
+              replies={replies}
+              addReply={addReply}
+            />
+          )} />
+        </Switch>
+      </Router>
     </div>
-    </>
   );
 }
 
