@@ -3,7 +3,7 @@ from database.mongo import tweet_collection
 
 router = APIRouter()
 @router.get("/tweets")
-async def get_all_tweets(limit: int = 10):
-    cursor = tweet_collection.find({}, {"_id": 0}).limit(limit)
-    tweets = await cursor.to_list(length=limit)
+async def get_all_tweets():
+    cursor = tweet_collection.find({}, {"_id": 0})
+    tweets = await cursor.to_list()
     return {"tweets": tweets}

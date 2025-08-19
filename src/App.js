@@ -14,6 +14,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 function App() {
   // Lift posts state up
   const [posts, setPosts] = useState([]);
+  const [redditPosts,setRedditPosts] = useState([])
   const [replies, setReplies] = useState({}); // Track replies for each post
   const [commentsFeed, setCommentsFeed] = useState([]); // Track all comments for feed
   const [nextPostId, setNextPostId] = useState(1000); // Start with a high number to avoid conflicts
@@ -89,7 +90,7 @@ function App() {
       <Sidebar />
       <Switch>
         <Route exact path="/">
-          <Feed posts={posts} addTweet={addTweet} addReply={addReply} />
+          <Feed posts={posts} addTweet={addTweet} addReply={addReply} redditPosts={redditPosts} setRedditPosts={setRedditPosts}/>
           <Widgets />          
         </Route>
         <Route path="/practice" component={Practice} />
@@ -105,6 +106,7 @@ function App() {
           <PostPage 
             {...props} 
             posts={posts} 
+            redditPosts={redditPosts}
             replies={replies}
             addReply={addReply}
           />

@@ -7,6 +7,7 @@ import torch
 # ✅ Routers
 from routes.auth_routes import router as AuthRouter
 from routes.tweet_routes import router as TweetRouter  # ✅ Import tweet router
+from reddit import router as reddit_router
 
 app = FastAPI()
 
@@ -33,6 +34,7 @@ class TweetText(BaseModel):
 # ✅ Include routers
 app.include_router(AuthRouter)
 app.include_router(TweetRouter)  # 👈 This registers /tweets endpoint
+app.include_router(reddit_router)
 
 # ✅ Endpoint for prediction using BERT
 @app.post("/predict")

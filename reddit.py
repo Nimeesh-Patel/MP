@@ -1,39 +1,49 @@
-import praw
-import os
-from dotenv import load_dotenv
+from fastapi import APIRouter
+import requests
 
-# Load .env file
-load_dotenv()
+router = APIRouter()
 
-# Reddit client
-reddit = praw.Reddit(
-    client_id=os.getenv("REDDIT_CLIENT_ID"),
-    client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-    user_agent="misinfo-detector"
-)
+REDDIT_ENDPOINTS = [
+    "https://www.reddit.com/hot.json",
+    "https://www.reddit.com/new.json",
+    "https://www.reddit.com/top.json",
+    "https://www.reddit.com/rising.json",
+]
 
-# Fetch posts
-def fetch_reddit_posts():
-    posts = []
-    subreddit = reddit.subreddit("IndiaPolitics+IndiaSpeaks+Chodi")  # multiple subs
+HEADERS = {"User-Agent": "MyRedditApp/0.0.1"}  # Reddit requires User-Agent
 
-    for post in subreddit.hot(limit=10):  # top 10 hot posts
-        posts.append({
-            "title": post.title,
-            "text": post.selftext,
-            "url": post.url,
-            "score": post.score,
-            "created_utc": post.created_utc,
-            "num_comments": post.num_comments
-        })
 
-    return posts
+@router.get("/reddit")
+def get_reddit_posts(limit: int = 10):
+    all_posts = []
 
-if __name__ == "__main__":
-    reddit_posts = fetch_reddit_posts()
-    for i, post in enumerate(reddit_posts, 1):
-        print(f"\nPost {i}:")
-        print(f"Title: {post['title']}")
-        print(f"URL: {post['url']}")
-        print(f"Score: {post['score']} | Comments: {post['num_comments']}")
-        print(f"Text: {post['text'][:200]}...")  # preview first 200 chars
+    for endpoint in REDDIT_ENDPOINTS:
+        try:
+            response = requests.get(f"{endpoint}?limit={limit}", headers=HEADERS, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+
+            # Extract posts
+            posts = [
+                {
+                    "id": item["data"]["id"],
+                    "title": item["data"]["title"],
+                    "author": item["data"]["author"],
+                    "subreddit": item["data"]["subreddit"],
+                    "url": item["data"].get("url"),
+                    "thumbnail": item["data"].get("thumbnail"),
+                    "created_utc": item["data"]["created_utc"],
+                    "score": item["data"]["score"],
+                    "num_comments": item["data"]["num_comments"],
+                    "permalink": f"https://www.reddit.com{item['data']['permalink']}",
+                    "source": endpoint.split("/")[-1].replace(".json", ""),  # hot/new/top/rising
+                }
+                for item in data["data"]["children"]
+            ]
+
+            all_posts.extend(posts)
+
+        except Exception as e:
+            print(f"Error fetching {endpoint}: {e}")
+
+    return {"posts": all_posts}

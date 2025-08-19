@@ -62,32 +62,33 @@ const Post = forwardRef(
     };
     
     const handleCommentSubmit = (e) => {
-      e.preventDefault();
-      if (commentText.trim() && addReply && postId) {
-        // Always add reply to the currently viewed post/reply
-        addReply(postId, commentText);
-        setShowCommentModal(false);
-        setCommentText("");
-      } else {
-        setShowCommentModal(false);
-        setCommentText("");
-      }
-    };
+  e.preventDefault();
+  if (commentText.trim() && addReply && postId) {
+    addReply(postId, {
+      text: commentText,
+      avatar: "/default_avatar.png",
+      displayName: "Anonymous",
+      username: "user123",
+      verified: false,
+      id: Date.now()
+    });
+    setShowCommentModal(false);
+    setCommentText("");
+  }
+};
 
     const handlePostClick = (e) => {
-      // Prevent navigation if clicking on an action button, if it's a reply, if it's in comments feed, or if it's already on its own page
-      if (
-        e.target.closest('.post__footer') ||
-        e.target.closest('.tweet__actions') ||
-        isReply ||
-        isCommentFeed ||
-        isOnPostPage
-      ) {
-        return;
-      }
-      // Use the unique post ID for navigation
-      history.push(`/post/${postId}`);
-    };
+  // Only navigate if clicking the post body, not buttons
+  if (e.target.closest('button') || 
+      e.target.closest('a') || 
+      e.target.tagName === 'IMG' ||
+      isReply || 
+      isCommentFeed || 
+      isOnPostPage) {
+    return;
+  }
+  history.push(`/post/${postId}`);
+};
 
     return (
       <div 
@@ -111,7 +112,7 @@ const Post = forwardRef(
               </h3>
             </div>
             <div className="post__headerDescription">
-              <p>{text}</p>
+              <p>{typeof text === 'string' ? text : text?.text || ''}</p>
             </div>
             <div className="tweet__actions tweet__actions--top">
               <button
@@ -137,7 +138,7 @@ const Post = forwardRef(
             </div>
           </div>
 
-          <img src={image} alt="" />
+          {image && <img src={image} alt="" />}
           <div className="post__footer">
             {!hideCommentButton && (
               <button className="post__commentButton" onClick={handleCommentClick} title="Comment">

@@ -26,19 +26,30 @@ function Practice() {
     resetGameState();
   }, [activeTab]);
 
+  // Fisher-Yates Shuffle
+  function shuffleArray(array) {
+    const arr = [...array]; // Make a copy so you don't mutate the original
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
   const resetGameState = () => {
-    setScore(0);
-    setStreak(0);
-    setGameStatus("playing");
-    setCurrentItemIndex(0);
-    setStackedItems([]);
-  };
+  setScore(0);
+  setStreak(0);
+  setGameStatus("playing");
+  setCurrentItemIndex(0);
+  setStackedItems([]);
+};
+
 
   const fetchTweets = async () => {
     try {
       const response = await fetch("http://localhost:8003/tweets");
       const data = await response.json();
-      setTweets(data.tweets);
+      setTweets(shuffleArray(data.tweets));
     } catch (error) {
       console.error("Failed to load tweets:", error);
     }
@@ -48,7 +59,7 @@ function Practice() {
     try {
       const response = await fetch("http://localhost:8001/fakenews");
       const data = await response.json();
-      setImages(data.images);
+      setImages(shuffleArray(data.images));
     } catch (error) {
       console.error("Failed to load fake news images:", error);
     }
@@ -58,11 +69,30 @@ function Practice() {
     try {
       const response = await fetch("http://localhost:8002/memes");
       const data = await response.json();
-      setMemes(data.images);
+      setMemes(shuffleArray(data.images));
     } catch (error) {
       console.error("Failed to load hateful memes:", error);
     }
   };
+  const fetchExplanation = async (content, modelPrediction, contentType) => {
+  try {
+    const response = await fetch("http://localhost:8004/generate-explanation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content,
+        model_prediction: modelPrediction,
+        content_type: contentType
+      }),
+    });
+    const data = await response.json();
+    return data.explanation || "No explanation available";
+  } catch (error) {
+    console.error("Failed to fetch explanation:", error);
+    return "Failed to get explanation";
+  }
+};
+
 
   const handleCorrectPrediction = (item, prediction) => {
     setStackedItems(prev => {
@@ -74,11 +104,33 @@ function Practice() {
     setCurrentItemIndex(prev => prev + 1);
   };
 
-  const handleWrongPrediction = (item, prediction) => {
+  const handleWrongPrediction = async (item, modelPrediction) => {
+    console.log("Current item:", item);
+    console.log("Image URL:", typeof item === 'string' ? item : item.url);
+    
     const wrappedItem = typeof item === 'string' ? { url: item } : item;
-    setStackedItems(prev => [{ ...wrappedItem, prediction }, ...prev]);
+    const content = typeof item === 'string' ? item : item.url;
+    
+    // Get explanation from Gemini
+    let explanation = "";
+    if (activeTab === "hate_speech") {
+      explanation = await fetchExplanation(item.text, modelPrediction, "tweet");
+    } else if (activeTab === "fake_news" || activeTab === "hateful_memes") {
+      explanation = await fetchExplanation(
+        content, // Use the properly extracted URL
+        modelPrediction, 
+        activeTab === "fake_news" ? "image" : "meme"
+      );
+    }
+
+    setStackedItems(prev => [{ 
+      ...wrappedItem, 
+      prediction: modelPrediction,
+      explanation,
+      isWrong: true 
+    }, ...prev]);
     setGameStatus("gameover");
-  };
+};
 
   const handleRestartGame = () => {
     setGameStatus("playing");
@@ -86,6 +138,15 @@ function Practice() {
     setStreak(0);
     setCurrentItemIndex(0);
     setStackedItems([]);
+
+    // Fetch and reshuffle items again
+  if (activeTab === "hate_speech") {
+    fetchTweets();
+  } else if (activeTab === "fake_news") {
+    fetchFakeNewsImages();
+  } else if (activeTab === "hateful_memes") {
+    fetchHatefulMemes();
+  }
   };
 
   const getCurrentItem = () => {
@@ -168,6 +229,7 @@ function Practice() {
                       disabled={true} 
                       showPrediction={true}
                       prediction={item.prediction}
+                      explanation={item.explanation}
                     />
                   )}
                   {activeTab === "fake_news" && (
@@ -176,6 +238,8 @@ function Practice() {
                       disabled={true} 
                       showPrediction={true}
                       prediction={item.prediction}
+                      explanation={item.explanation}
+
                     />
                   )}
                   {activeTab === "hateful_memes" && (
@@ -184,6 +248,8 @@ function Practice() {
                       disabled={true} 
                       showPrediction={true}
                       prediction={item.prediction}
+                      explanation={item.explanation}
+
                     />
                   )}
                 </div>
@@ -199,6 +265,7 @@ function Practice() {
                       disabled={true} 
                       showPrediction={true}
                       prediction={item.prediction}
+                      explanation={item.explanation}
                     />
                   )}
                   {activeTab === "fake_news" && (
@@ -207,6 +274,7 @@ function Practice() {
                       disabled={true} 
                       showPrediction={true}
                       prediction={item.prediction}
+                      explanation={item.explanation}
                     />
                   )}
                   {activeTab === "hateful_memes" && (
@@ -215,6 +283,7 @@ function Practice() {
                       disabled={true} 
                       showPrediction={true}
                       prediction={item.prediction}
+                      explanation={item.explanation}
                     />
                   )}
                 </div>
@@ -227,10 +296,13 @@ function Practice() {
           <div className="game-header">
             <h2>🎯 ScoreCard</h2>
             {gameStatus === "playing" && (
+              <>
               <div className="score-container">
+                <p style={{fontSize:'28px',fontWeight:'bold'}}>Your Score</p>
                 <span className="score-box">🔥 Streak: {streak}</span>
                 <span className="score-box">⭐ Score: {score}</span>
               </div>
+              </>
             )}
             {gameStatus === "gameover" && (
               <div className="gameover-box">
@@ -250,7 +322,7 @@ function Practice() {
 }
 
 // Updated TweetCard component with consistent styling
-function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, isWrong }) {
+function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction,explanation ,isWrong }) {
   const [userPrediction, setUserPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -268,6 +340,7 @@ function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPre
       const data = await res.json();
       const modelPrediction = data.label || "No result";
 
+      // In the prediction handling logic
       if (modelPrediction?.toLowerCase() === type.toLowerCase()) {
         onCorrect(modelPrediction);
         if (isLast) {
@@ -275,7 +348,7 @@ function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPre
           onWrong(modelPrediction);
         }
       } else {
-        onWrong(modelPrediction);
+        onWrong(modelPrediction);  // Only pass model's prediction
       }
     } catch (error) {
       console.error("Prediction failed:", error);
@@ -317,21 +390,28 @@ function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPre
           </button>
         </div>
       )}
-      {loading && <p>Predicting...</p>}
+      {loading && <div class="loader"></div>}
       {(showPrediction || userPrediction) && !loading && (
         <div className="prediction-result-container">
           <p className="prediction-result">
             {showPrediction ? "Correct answer: " : "Your prediction: "} 
             <strong>{prediction || userPrediction}</strong>
           </p>
+          {(isWrong || showPrediction) && explanation && (
+  <div className="explanation-box">
+    <p><strong>Model's Analysis:</strong> {prediction}</p>
+    <p><strong>Explanation:</strong> {explanation}</p>
+  </div>
+)}
         </div>
       )}
+      
     </div>
   );
 }
 
 // Updated ImageCard component with fixed image size
-function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, isWrong }) {
+function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, explanation, isWrong }) {
   const [userPrediction, setUserPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
@@ -372,7 +452,7 @@ function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, show
           onWrong(modelPrediction);
         }
       } else {
-        setResultMessage(`❌ Wrong Prediction (Model said: ${modelPrediction}, Confidence: ${(data.confidence * 100).toFixed(1)}%)`);
+        // setResultMessage(`❌ Wrong Prediction (Model said: ${modelPrediction}, Confidence: ${(data.confidence * 100).toFixed(1)}%)`);
         onWrong(modelPrediction);
       }
     } catch (error) {
@@ -422,7 +502,7 @@ function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, show
           </button>
         </div>
       )}
-      {loading && <p>Predicting...</p>}
+      {loading && <div class="loader"></div>}
       {(showPrediction || resultMessage) && (
         <div className="prediction-result-container">
           {showPrediction ? (
@@ -439,12 +519,18 @@ function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, show
           )}
         </div>
       )}
+      {(isWrong || showPrediction) && explanation && (
+  <div className="explanation-box">
+    <p><strong>Model's Analysis:</strong> {prediction}</p>
+    <p><strong>Explanation:</strong> {explanation}</p>
+  </div>
+)}
     </div>
   );
 }
 
 // Updated MemeCard component with fixed image size
-function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, isWrong }) {
+function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, explanation, isWrong }) {
   const [userPrediction, setUserPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
@@ -482,7 +568,7 @@ function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPr
           onWrong(modelPrediction);
         }
       } else {
-        setResultMessage("❌ Wrong Prediction");
+        // setResultMessage("❌ Wrong Prediction");
         onWrong(modelPrediction);
       }
     } catch (error) {
@@ -530,7 +616,7 @@ function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPr
           </button>
         </div>
       )}
-      {loading && <p>Predicting...</p>}
+      {loading && <div class="loader"></div>}
       {(showPrediction || resultMessage) && (
         <div className="prediction-result-container">
           {showPrediction ? (
@@ -547,6 +633,12 @@ function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPr
           )}
         </div>
       )}
+      {(isWrong || showPrediction) && explanation && (
+  <div className="explanation-box">
+    {/* <p><strong>Model's Analysis:</strong> {prediction}</p> */}
+    <p style={{fontFamily:"sans-serif",wordSpacing:"2px",lineHeight:'1.5'}}><strong>Explanation:</strong> {explanation}</p>
+  </div>
+)}
     </div>
   );
 }

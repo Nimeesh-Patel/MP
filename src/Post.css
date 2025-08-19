@@ -4,6 +4,7 @@
   align-items: flex-start;
   border-bottom: 1px solid var(--twitter-background);
   padding-bottom: 10px;
+  width:600px;
 }
 
 .post__body {
@@ -12,8 +13,23 @@
 }
 
 .post__body > img {
+  display: block;
+  max-width: 100%;          /* don’t overflow container */
+  width: 100%;              /* take full width of post */
+  max-height: 400px;        /* set fixed height limit */
+  object-fit: cover;        /* crop nicely without distortion */
+  border-radius: 20px;
+  margin-top: 10px;
+}
+
+/* Optional: if you want all images square with exact size */
+.post__body > img.fixed-size {
+  width: 300px;             /* fixed width */
+  height: 300px;            /* fixed height */
+  object-fit: cover;        /* keeps proportion inside box */
   border-radius: 20px;
 }
+
 
 .post__footer {
   display: flex;
