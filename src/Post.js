@@ -9,7 +9,22 @@ import PublishIcon from "@material-ui/icons/Publish";
 import { useHistory } from "react-router-dom";
 
 const Post = forwardRef(
-  ({ displayName, username, verified, text, image, avatar, postId, isReply = false, addReply, originalPostId, isCommentFeed = false, isOnPostPage = false, hideCommentButton = false }, ref) => {
+  ({ 
+    displayName, 
+    username, 
+    verified, 
+    text, 
+    image, 
+    avatar, 
+    postId, 
+    isReply = false, 
+    addReply, 
+    originalPostId, 
+    isCommentFeed = false, 
+    isOnPostPage = false, 
+    hideCommentButton = false,
+    onReply // Add the onReply prop
+  }, ref) => {
     const [showGrokModal, setShowGrokModal] = useState(false);
     const [animateGrok, setAnimateGrok] = useState(false);
     const [grokResult, setGrokResult] = useState("");
@@ -62,22 +77,32 @@ const Post = forwardRef(
     };
     
     const handleCommentSubmit = (e) => {
-  e.preventDefault();
-  if (commentText.trim() && addReply && postId) {
-    addReply(postId, {
-      text: commentText,
-      avatar: "/default_avatar.png",
-      displayName: "Anonymous",
-      username: "user123",
-      verified: false,
-      id: Date.now()
-    });
-    setShowCommentModal(false);
-    setCommentText("");
-  }
-};
+      e.preventDefault();
+      if (commentText.trim() && addReply && postId) {
+        addReply(postId, {
+          text: commentText,
+          avatar: "/default_avatar.png",
+          displayName: "Anonymous",
+          username: "user123",
+          verified: false,
+          id: Date.now()
+        });
+        setShowCommentModal(false);
+        setCommentText("");
+      }
+    };
 
-    const handlePostClick = (e) => {
+    const handleReplyClick = (e) => {
+      e.stopPropagation(); // Prevent event bubbling
+      if (onReply) {
+        onReply(); // Call the onReply function if provided
+      } else {
+        handleCommentClick(e); // Fallback to the original comment modal
+      }
+    };
+
+    // In your Post component, update the handlePostClick function
+const handlePostClick = (e) => {
   // Only navigate if clicking the post body, not buttons
   if (e.target.closest('button') || 
       e.target.closest('a') || 
@@ -87,6 +112,8 @@ const Post = forwardRef(
       isOnPostPage) {
     return;
   }
+  
+  // Navigate to the post/comment page
   history.push(`/post/${postId}`);
 };
 
@@ -141,7 +168,7 @@ const Post = forwardRef(
           {image && <img src={image} alt="" />}
           <div className="post__footer">
             {!hideCommentButton && (
-              <button className="post__commentButton" onClick={handleCommentClick} title="Comment">
+              <button className="post__commentButton" onClick={handleReplyClick} title="Comment">
                 <ChatBubbleOutlineIcon fontSize="small" />
               </button>
             )}

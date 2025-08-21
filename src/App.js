@@ -9,6 +9,7 @@ import Practice from "./Practice";
 import MultimodalTest from "./MultimodalTest"
 import PostPage from "./PostPage";
 import CommentsFeed from "./CommentsFeed";
+import Profile from "./Profile";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 function App() {
@@ -28,49 +29,77 @@ function App() {
     });
   };
 
-  const addTweet = (tweet) => {
-    const newPostId = nextPostId;
-    setNextPostId(prev => prev + 1);
-    
-    setPosts(prevPosts => {
-      const updatedPosts = [
-        {
-          id: newPostId,
-          displayName: "Rafeh Qazi",
-          username: "cleverqazi",
-          verified: true,
-          avatar:
-            "https://kajabi-storefronts-production.global.ssl.fastly.net/kajabi-storefronts-production/themes/284832/settings_images/rLlCifhXRJiT0RoN2FjK_Logo_roundbackground_black.png",
-          ...tweet,
-        },
-        ...prevPosts,
-      ];
-      return ensurePostIds(updatedPosts);
-    });
-  };
+  const addTweet = async (tweet) => {
+  try {
+    const userId = localStorage.getItem("userId");
+    const username = localStorage.getItem("username");
+    const email = localStorage.getItem("email");
+    const avatar = localStorage.getItem("profile_photo");
 
-  const addReply = (postId, reply, parentReplyId = null) => {
-    const replyId = Date.now();
-    const newReply = {
-      displayName: "Rafeh Qazi",
-      username: "cleverqazi",
-      verified: true,
-      avatar:
-        "https://kajabi-storefronts-production.global.ssl.fastly.net/kajabi-storefronts-production/themes/284832/settings_images/rLlCifhXRJiT0RoN2FjK_Logo_roundbackground_black.png",
-      text: reply,
-      timestamp: new Date().toISOString(),
-      id: replyId,
-      parentReplyId: parentReplyId,
-      originalPostId: postId,
+    if (!userId) {
+      alert("You must be logged in to create a post.");
+      return;
+    }
+
+    const newPost = {
+      text: tweet.text,
+      image: tweet.image || null,
+      userId,
+      username,
+      email,
+      avatar,
     };
 
-    setReplies(prevReplies => ({
-      ...prevReplies,
-      [postId]: [newReply, ...(prevReplies[postId] || [])],
-    }));
+    const res = await fetch("http://localhost:8003/posts/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newPost),
+    });
 
-    setCommentsFeed(prevComments => [newReply, ...prevComments]);
+    if (!res.ok) {
+      console.error("Failed to save post:", await res.json());
+      return;
+    }
+
+    const savedPost = await res.json();
+
+    setPosts(prev => [savedPost, ...prev]); // ✅ add saved post to feed
+  } catch (err) {
+    console.error("Error adding tweet:", err);
+  }
+};
+
+
+  const addReply = async (postId, reply, parentReplyId = null) => {
+  const replyData = {
+    postId,
+    text: typeof reply === "string" ? reply : reply.text,
+    parentReplyId,
+    userId: localStorage.getItem("userId"), // save at login
   };
+
+  const res = await fetch("http://localhost:8003/comments/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(replyData),
+  });
+
+  const savedReply = await res.json();
+
+  const newReply = {
+    ...reply,
+    ...savedReply,
+    originalPostId: postId,
+  };
+
+  setReplies(prev => ({
+    ...prev,
+    [postId]: [newReply, ...(prev[postId] || [])],
+  }));
+
+  setCommentsFeed(prev => [newReply, ...prev]);
+};
+
 
   return (
     <div className="app">
@@ -81,6 +110,7 @@ function App() {
           <Route exact path="/">
             <Feed 
               posts={posts} 
+              setPosts={setPosts}
               addTweet={addTweet} 
               addReply={addReply} 
               redditPosts={redditPosts} 
@@ -105,6 +135,7 @@ function App() {
           {/* Classifier */}
           <Route path="/classifier" component={MultimodalTest} />
 
+          <Route path="/profile/:userId" component={Profile}></Route>
           {/* Comments Feed */}
           <Route path="/comments" render={(props) => (
             <CommentsFeed 

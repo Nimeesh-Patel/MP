@@ -41,6 +41,10 @@ const handleChange = (e) => {
       }
 
       localStorage.setItem("token", data.access_token);
+localStorage.setItem("userId", data.userId);
+localStorage.setItem("username", data.username);
+localStorage.setItem("email", data.email);
+localStorage.setItem("avatar", data.profile_photo || "/default_avatar.png");
       alert("Login successful!");
       history.push("/"); // Redirect to homepage
     } catch (err) {

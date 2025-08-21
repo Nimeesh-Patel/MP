@@ -18,3 +18,5 @@ tweet_collection = db.get_collection("tweets_collection")
 fakenews_collection = db.get_collection("fakeNews_images")
 memes_collection = db.get_collection("hateful_memes")
 user_collection = db.get_collection("users")
+posts_collection = db["posts"] 
+comments_collection = db.get_collection("comments")

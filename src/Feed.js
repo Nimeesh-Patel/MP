@@ -4,17 +4,18 @@ import Post from "./Post";
 import "./Feed.css";
 import FlipMove from "react-flip-move";
 
-function Feed({ posts, addTweet, addReply,redditPosts, setRedditPosts }) {
-
+function Feed({ posts, setPosts, addTweet, addReply, redditPosts, setRedditPosts }) {
+  
   useEffect(() => {
-    fetch("http://localhost:8003/reddit?limit=10")
-      .then(res => res.json())
-      .then(data => {
+    // Fetch Reddit posts
+    const fetchReddit = async () => {
+      try {
+        const res = await fetch("http://localhost:8003/reddit?limit=10");
+        const data = await res.json();
         if (!data || !data.posts) {
           console.error("No posts found in Reddit API response", data);
           return;
         }
-        console.log(data)
         const mapped = data.posts.map((item) => ({
           id: `reddit_${item.id}`,
           redditId: item.id,
@@ -23,23 +24,45 @@ function Feed({ posts, addTweet, addReply,redditPosts, setRedditPosts }) {
           verified: false,
           text: item.title,
           avatar: `https://api.dicebear.com/7.x/identicon/svg?seed=${item.author}`,
-          image: item.url_overridden_by_dest?.match(/\.(jpg|png|jpeg)$/i)
-            ? item.url_overridden_by_dest
-            : null,
+          image: item.url,
           label: "Reddit",
           timestamp: new Date(item.created_utc * 1000).toISOString(),
         }));
-
-        setRedditPosts(mapped); // Use the prop function to update state in App.js
-      })
-      .catch(err => {
+        setRedditPosts(mapped);
+      } catch (err) {
         console.error("Error fetching reddit data:", err);
-      });
-  }, [setRedditPosts]);
+      }
+    };
 
+    // Fetch user-created posts
+    const fetchUserPosts = async () => {
+      try {
+        const res = await fetch("http://localhost:8003/posts/");
+        if (!res.ok) {
+          console.error("Failed to fetch user posts");
+          return;
+        }
+        const data = await res.json();
+        const mapped = data.map((p) => ({
+          id: p._id,
+          displayName: p.username,
+          username: p.username,
+          verified: false,
+          text: p.text,
+          avatar: p.avatar || "/default_avatar.png",
+          image: p.image,
+          label: "User",
+          timestamp: p.createdAt,
+        }));
+        setPosts(mapped);
+      } catch (err) {
+        console.error("Error fetching user posts:", err);
+      }
+    };
 
-
-
+    fetchReddit();
+    fetchUserPosts();
+  }, [setRedditPosts, setPosts]);
 
   return (
     <div className="feed">
@@ -50,6 +73,7 @@ function Feed({ posts, addTweet, addReply,redditPosts, setRedditPosts }) {
       <TweetBox addTweet={addTweet} />
 
       <FlipMove>
+        {/* User posts first */}
         {posts.map((post, idx) => (
           <Post
             key={post.id || idx}
@@ -65,6 +89,8 @@ function Feed({ posts, addTweet, addReply,redditPosts, setRedditPosts }) {
             originalPostId={post.id || idx}
           />
         ))}
+
+        {/* Reddit posts */}
         {redditPosts.map((post) => (
           <Post
             key={`reddit-${post.redditId}`}
@@ -73,15 +99,13 @@ function Feed({ posts, addTweet, addReply,redditPosts, setRedditPosts }) {
             verified={post.verified}
             text={post.text}
             avatar={post.avatar}
-            image={post.image || undefined} // Prevent null img
+            image={post.image || undefined}
             label={post.label}
             postId={post.id}
             addReply={addReply}
             originalPostId={post.id}
           />
         ))}
-
-        
       </FlipMove>
     </div>
   );

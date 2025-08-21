@@ -7,28 +7,28 @@ function TweetBox({ addTweet }) {
   const [tweetImage, setTweetImage] = useState("");
 
   const sendTweet = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!tweetMessage.trim()) return;
+  if (!tweetMessage.trim()) return;
 
-    // Just create a new tweet without calling Gemini
-    if (addTweet) {
-      addTweet({
-        text: tweetMessage,
-        image: tweetImage,
-        label: null, // No label yet
-      });
-    }
+  if (addTweet) {
+    await addTweet({
+      text: tweetMessage,
+      image: tweetImage,
+      label: null,
+    });
+  }
 
-    setTweetMessage("");
-    setTweetImage("");
-  };
+  setTweetMessage("");
+  setTweetImage("");
+};
+
 
   return (
     <div className="tweetBox">
       <form onSubmit={sendTweet}>
         <div className="tweetBox__input">
-          <Avatar src="https://kajabi-storefronts-production.global.ssl.fastly.net/kajabi-storefronts-production/themes/284832/settings_images/rLlCifhXRJiT0RoN2FjK_Logo_roundbackground_black.png" />
+          <Avatar src={localStorage.getItem("avatar") || "/default_avatar.png"} />
           <input
             onChange={(e) => setTweetMessage(e.target.value)}
             value={tweetMessage}

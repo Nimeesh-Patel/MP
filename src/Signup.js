@@ -1,11 +1,13 @@
 // src/Signup.js
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./auth.css";
 import signupImage from "./Assets/signup-image.png";
+import defaultProfile from "./Assets/default-profile.png"; // Add a default profile image
 import { Link, useHistory } from "react-router-dom";
 
 function Signup() {
   const navigate = useHistory();
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -14,7 +16,10 @@ function Signup() {
     password: "",
     repeatPassword: "",
     termsAccepted: false,
+    profilePhoto: null,
   });
+
+  const [previewUrl, setPreviewUrl] = useState(defaultProfile);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,6 +27,32 @@ function Signup() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        profilePhoto: file,
+      }));
+
+      // Create a preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setFormData((prev) => ({
+      ...prev,
+      profilePhoto: null,
+    }));
+    setPreviewUrl(defaultProfile);
+    fileInputRef.current.value = "";
   };
 
   const handleSubmit = async (e) => {
@@ -39,17 +70,21 @@ function Signup() {
     }
 
     try {
+      // Create FormData instead of JSON for file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("password", formData.password);
+      
+      if (formData.profilePhoto) {
+        formDataToSend.append("profile_photo", formData.profilePhoto);
+      }
+
       const response = await fetch("http://localhost:8003/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          username: formData.username,
-          password: formData.password,
-        }),
+        body: formDataToSend,
+        // Don't set Content-Type header - browser will set it with boundary
       });
 
       if (!response.ok) {
@@ -70,10 +105,37 @@ function Signup() {
     <section className="auth-page">
       <div className="auth-container">
         <div className="auth-img">
-          <img src={signupImage} alt="signup visual" />
+          {/* Profile Photo Upload Section */}
+          <div className="profile-photo-section">
+            <div className="profile-photo-preview">
+              <img src={previewUrl} alt="Profile preview" />
+            </div>
+            <div className="profile-photo-controls">
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handlePhotoChange}
+                style={{ display: "none" }}
+                id="profile-photo-input"
+              />
+              <label htmlFor="profile-photo-input" className="photo-upload-btn">
+                Choose Photo
+              </label>
+              {previewUrl !== defaultProfile && (
+                <button type="button" onClick={removePhoto} className="photo-remove-btn">
+                  Remove
+                </button>
+              )}
+            </div>
+            <p className="photo-note">Optional: Add a profile photo</p>
+          </div>
         </div>
         <div className="auth-form-container">
           <h2 className="auth-title">Sign up</h2>
+          
+          
+
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="auth-input-group">
               <input

@@ -3,11 +3,14 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from transformers import BertTokenizer, BertForSequenceClassification
 import torch
+from fastapi.staticfiles import StaticFiles
 
 # ✅ Routers
 from routes.auth_routes import router as AuthRouter
 from routes.tweet_routes import router as TweetRouter  # ✅ Import tweet router
 from reddit import router as reddit_router
+from routes.comment_routes import router as CommentRouter
+from routes.post_routes import router as PostRouter
 
 app = FastAPI()
 
@@ -31,10 +34,15 @@ model.to(device)
 class TweetText(BaseModel):
     text: str
 
+# Add this after creating your FastAPI app
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 # ✅ Include routers
 app.include_router(AuthRouter)
 app.include_router(TweetRouter)  # 👈 This registers /tweets endpoint
 app.include_router(reddit_router)
+app.include_router(CommentRouter)
+app.include_router(PostRouter)
 
 # ✅ Endpoint for prediction using BERT
 @app.post("/predict")
