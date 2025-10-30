@@ -33,7 +33,7 @@ function Profile() {
 
       <div className="profile-header" style={{ padding: "16px", display: "flex", alignItems: "center" }}>
         <img
-          src={profile.user.profile_photo || "/default_avatar.png"}
+          src={profile.user.profile_photo ? `http://localhost:8003${profile.user.profile_photo}` : "/default_avatar.png"}
           alt="profile"
           style={{ width: 80, height: 80, borderRadius: "50%", marginRight: 16 }}
         />

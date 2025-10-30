@@ -33,19 +33,19 @@ function Sidebar() {
 
   return (
     <div className="sidebar">
-      <TwitterIcon className="sidebar__twitterIcon" />
+      {/* <TwitterIcon className="sidebar__twitterIcon" /> */}
 
       <div onClick={() => history.push("/")}>
         <SidebarOption active Icon={HomeIcon} text="Home" />
       </div>
 
-      <SidebarOption Icon={SearchIcon} text="Explore" />
+      {/* <SidebarOption Icon={SearchIcon} text="Explore" />
       <SidebarOption Icon={NotificationsNoneIcon} text="Notifications" />
-      <SidebarOption Icon={MailOutlineIcon} text="Messages" />
+      <SidebarOption Icon={MailOutlineIcon} text="Messages" /> */}
 
-      <Link to="/classifier" style={{ textDecoration: "none", color: "inherit" }}>
+      {/* <Link to="/classifier" style={{ textDecoration: "none", color: "inherit" }}>
         <SidebarOption Icon={BookmarkBorderIcon} text="Practice Images" />
-      </Link>
+      </Link> */}
 
       <Link to="/practice" style={{ textDecoration: "none", color: "inherit" }}>
         <SidebarOption Icon={ListAltIcon} text="Practice" />
@@ -70,9 +70,9 @@ function Sidebar() {
       </div>
 
       {/* Tweet Button */}
-      <Button variant="outlined" className="sidebar__tweet" fullWidth>
-        Tweet
-      </Button>
+      {/* <Button variant="outlined" className="sidebar__tweet" fullWidth>
+        P
+      </Button> */}
     </div>
   );
 }
