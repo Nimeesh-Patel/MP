@@ -5,6 +5,7 @@ import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
 import RepeatIcon from "@material-ui/icons/Repeat";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import FavoriteIcon from "@material-ui/icons/Favorite";
 import PublishIcon from "@material-ui/icons/Publish";
 import { useHistory } from "react-router-dom";
 
@@ -31,6 +32,7 @@ const Post = forwardRef(
     const [loadingGrok, setLoadingGrok] = useState(false);
     const [error, setError] = useState(null);
     const [showCommentModal, setShowCommentModal] = useState(false);
+    const [liked, setLiked] = useState(false);
     const [commentText, setCommentText] = useState("");
     const history = useHistory();
 
@@ -172,9 +174,21 @@ const handlePostClick = (e) => {
                 <ChatBubbleOutlineIcon fontSize="small" />
               </button>
             )}
-            <RepeatIcon fontSize="small" />
-            <FavoriteBorderIcon fontSize="small" />
-            <PublishIcon fontSize="small" />
+  {/* ❤️ Like Button */}
+<button
+    className={`post__likeButton ${liked ? "liked" : ""}`}
+    title="Like"
+    onClick={(e) => {
+      e.stopPropagation(); // prevent post click
+      setLiked(!liked);
+    }}
+  >
+    {liked ? (
+      <FavoriteIcon fontSize="small" />
+    ) : (
+      <FavoriteBorderIcon fontSize="small" />
+    )}
+  </button>
           </div>
 
           {/* GROK Modal */}

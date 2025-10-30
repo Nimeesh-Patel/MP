@@ -366,3 +366,33 @@
   background: #1a8cd8 !important;
   transform: translateY(-1px);
 }
+.post__footer {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  justify-content: flex-start;
+  gap: 20px; /* space between buttons */
+}
+
+.post__footer button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.post__footer button:hover {
+  transform: scale(1.2);
+}
+
+.post__likeButton svg {
+  color: #e0245e; /* Twitter-like pink */
+}
+
+.post__commentButton svg {
+  color: #1da1f2;
+}
