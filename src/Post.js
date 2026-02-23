@@ -154,7 +154,7 @@ const handlePostClick = (e) => {
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#8899A6"
+                  stroke="#fff"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"

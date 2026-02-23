@@ -29,10 +29,11 @@ class TweetText(BaseModel):
 @app.post("/analyze-intention")
 def analyze_intention(tweet: TweetText):
     prompt = f"""
-Analyze the following content and form a theory about the intention of the person behind it through Popperian epistemology and Deutschian Explanation. Keep your explanations concise, precise, and pithy.
+Have Popperian view of epistemology and Deutschian view of good explanations (no need to mention them or use their jargon). Analyse the following content and form an explanation about it. Keep your explanations concise, and pithy. Important: Number of words in explanation should not longer than the original text. Also guess the intention of the text.
 
 Template:
-"[the 'unit vector description' of the intention (good, bad, regressive, open, closed, etc)] + intention: [your explanation of 10 words more or less regarding that]"
+"Intention: [intention of text]
+Explanation: [explanation of text]"
 
 Text:
 \"\"\"{tweet.text}\"\"\"

@@ -45,7 +45,7 @@ async def explain_prediction(request: ExplanationRequest):
     try:
         if request.content_type == "tweet":
             # Text-only analysis using gemini-1.5-flash
-            model = "gemini-1.5-flash"
+            model = "gemini-2.5-pro"
             parts = [{"text": f"""Analyze this tweet classified as {request.model_prediction}:
                     Content: \"\"\"{request.content}\"\"\"
                     
