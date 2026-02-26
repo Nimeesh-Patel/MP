@@ -8,10 +8,9 @@ function Practice() {
   const [images, setImages] = useState([]);
   const [memes, setMemes] = useState([]);
   const [activeTab, setActiveTab] = useState("hate_speech");
-  // Game state
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [gameStatus, setGameStatus] = useState("playing"); // 'playing', 'gameover'
+  const [gameStatus, setGameStatus] = useState("playing"); 
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [stackedItems, setStackedItems] = useState([]);
 
@@ -26,9 +25,8 @@ function Practice() {
     resetGameState();
   }, [activeTab]);
 
-  // Fisher-Yates Shuffle
   function shuffleArray(array) {
-    const arr = [...array]; // Make a copy so you don't mutate the original
+    const arr = [...array]; 
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -37,13 +35,12 @@ function Practice() {
   }
 
   const resetGameState = () => {
-  setScore(0);
-  setStreak(0);
-  setGameStatus("playing");
-  setCurrentItemIndex(0);
-  setStackedItems([]);
-};
-
+    setScore(0);
+    setStreak(0);
+    setGameStatus("playing");
+    setCurrentItemIndex(0);
+    setStackedItems([]);
+  };
 
   const fetchTweets = async () => {
     try {
@@ -74,25 +71,25 @@ function Practice() {
       console.error("Failed to load hateful memes:", error);
     }
   };
-  const fetchExplanation = async (content, modelPrediction, contentType) => {
-  try {
-    const response = await fetch("http://localhost:8004/generate-explanation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content,
-        model_prediction: modelPrediction,
-        content_type: contentType
-      }),
-    });
-    const data = await response.json();
-    return data.explanation || "No explanation available";
-  } catch (error) {
-    console.error("Failed to fetch explanation:", error);
-    return "Failed to get explanation";
-  }
-};
 
+  const fetchExplanation = async (content, modelPrediction, contentType) => {
+    try {
+      const response = await fetch("http://localhost:8004/generate-explanation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content,
+          model_prediction: modelPrediction,
+          content_type: contentType
+        }),
+      });
+      const data = await response.json();
+      return data.explanation || "No explanation available";
+    } catch (error) {
+      console.error("Failed to fetch explanation:", error);
+      return "Failed to get explanation";
+    }
+  };
 
   const handleCorrectPrediction = (item, prediction) => {
     setStackedItems(prev => {
@@ -111,13 +108,12 @@ function Practice() {
     const wrappedItem = typeof item === 'string' ? { url: item } : item;
     const content = typeof item === 'string' ? item : item.url;
     
-    // Get explanation from Gemini
     let explanation = "";
     if (activeTab === "hate_speech") {
       explanation = await fetchExplanation(item.text, modelPrediction, "tweet");
     } else if (activeTab === "fake_news" || activeTab === "hateful_memes") {
       explanation = await fetchExplanation(
-        content, // Use the properly extracted URL
+        content, 
         modelPrediction, 
         activeTab === "fake_news" ? "image" : "meme"
       );
@@ -130,7 +126,7 @@ function Practice() {
       isWrong: true 
     }, ...prev]);
     setGameStatus("gameover");
-};
+  };
 
   const handleRestartGame = () => {
     setGameStatus("playing");
@@ -139,14 +135,13 @@ function Practice() {
     setCurrentItemIndex(0);
     setStackedItems([]);
 
-    // Fetch and reshuffle items again
-  if (activeTab === "hate_speech") {
-    fetchTweets();
-  } else if (activeTab === "fake_news") {
-    fetchFakeNewsImages();
-  } else if (activeTab === "hateful_memes") {
-    fetchHatefulMemes();
-  }
+    if (activeTab === "hate_speech") {
+      fetchTweets();
+    } else if (activeTab === "fake_news") {
+      fetchFakeNewsImages();
+    } else if (activeTab === "hateful_memes") {
+      fetchHatefulMemes();
+    }
   };
 
   const getCurrentItem = () => {
@@ -164,25 +159,16 @@ function Practice() {
     <div className="practice">
       <div className="practice-container">
         <div className="content-section">
-                      <h2>  Gamified Platform</h2>
+          <h2>Gamified Platform</h2>
 
           <div className="tabs">
-            <button
-              className={activeTab === "hate_speech" ? "active" : ""}
-              onClick={() => setActiveTab("hate_speech")}
-            >
+            <button className={activeTab === "hate_speech" ? "active" : ""} onClick={() => setActiveTab("hate_speech")}>
               Hate Speech
             </button>
-            <button
-              className={activeTab === "fake_news" ? "active" : ""}
-              onClick={() => setActiveTab("fake_news")}
-            >
+            <button className={activeTab === "fake_news" ? "active" : ""} onClick={() => setActiveTab("fake_news")}>
               Fake News
             </button>
-            <button
-              className={activeTab === "hateful_memes" ? "active" : ""}
-              onClick={() => setActiveTab("hateful_memes")}
-            >
+            <button className={activeTab === "hateful_memes" ? "active" : ""} onClick={() => setActiveTab("hateful_memes")}>
               Hateful Memes
             </button>
           </div>
@@ -191,67 +177,16 @@ function Practice() {
             <FlipMove className="tweets-section">
               {getCurrentItem() && (
                 <div key={`active-${currentItemIndex}`}>
-                  {activeTab === "hate_speech" && (
-                    <TweetCard
-                      tweet={getCurrentItem()}
-                      onCorrect={(prediction) => handleCorrectPrediction(getCurrentItem(), prediction)}
-                      onWrong={(prediction) => handleWrongPrediction(getCurrentItem(), prediction)}
-                      isLast={currentItemIndex === tweets.length - 1}
-                      score={score}
-                    />
-                  )}
-                  {activeTab === "fake_news" && (
-                    <ImageCard
-                      imageUrl={getCurrentItem()}
-                      onCorrect={(prediction) => handleCorrectPrediction(getCurrentItem(), prediction)}
-                      onWrong={(prediction) => handleWrongPrediction(getCurrentItem(), prediction)}
-                      isLast={currentItemIndex === images.length - 1}
-                      score={score}
-                    />
-                  )}
-                  {activeTab === "hateful_memes" && (
-                    <MemeCard
-                      memeUrl={getCurrentItem()}
-                      onCorrect={(prediction) => handleCorrectPrediction(getCurrentItem(), prediction)}
-                      onWrong={(prediction) => handleWrongPrediction(getCurrentItem(), prediction)}
-                      isLast={currentItemIndex === memes.length - 1}
-                      score={score}
-                    />
-                  )}
+                  {activeTab === "hate_speech" && <TweetCard tweet={getCurrentItem()} onCorrect={(prediction) => handleCorrectPrediction(getCurrentItem(), prediction)} onWrong={(prediction) => handleWrongPrediction(getCurrentItem(), prediction)} isLast={currentItemIndex === tweets.length - 1} score={score} />}
+                  {activeTab === "fake_news" && <ImageCard imageUrl={getCurrentItem()} onCorrect={(prediction) => handleCorrectPrediction(getCurrentItem(), prediction)} onWrong={(prediction) => handleWrongPrediction(getCurrentItem(), prediction)} isLast={currentItemIndex === images.length - 1} score={score} />}
+                  {activeTab === "hateful_memes" && <MemeCard memeUrl={getCurrentItem()} onCorrect={(prediction) => handleCorrectPrediction(getCurrentItem(), prediction)} onWrong={(prediction) => handleWrongPrediction(getCurrentItem(), prediction)} isLast={currentItemIndex === memes.length - 1} score={score} />}
                 </div>
               )}
-              
               {stackedItems.map((item, index) => (
                 <div key={`stacked-${index}`}>
-                  {activeTab === "hate_speech" && (
-                    <TweetCard 
-                      tweet={item} 
-                      disabled={true} 
-                      showPrediction={true}
-                      prediction={item.prediction}
-                      explanation={item.explanation}
-                    />
-                  )}
-                  {activeTab === "fake_news" && (
-                    <ImageCard 
-                      imageUrl={item.url} 
-                      disabled={true} 
-                      showPrediction={true}
-                      prediction={item.prediction}
-                      explanation={item.explanation}
-
-                    />
-                  )}
-                  {activeTab === "hateful_memes" && (
-                    <MemeCard 
-                      memeUrl={item.url} 
-                      disabled={true} 
-                      showPrediction={true}
-                      prediction={item.prediction}
-                      explanation={item.explanation}
-
-                    />
-                  )}
+                  {activeTab === "hate_speech" && <TweetCard tweet={item} disabled={true} showPrediction={true} prediction={item.prediction} explanation={item.explanation} />}
+                  {activeTab === "fake_news" && <ImageCard imageUrl={item.url} disabled={true} showPrediction={true} prediction={item.prediction} explanation={item.explanation} />}
+                  {activeTab === "hateful_memes" && <MemeCard memeUrl={item.url} disabled={true} showPrediction={true} prediction={item.prediction} explanation={item.explanation} />}
                 </div>
               ))}
             </FlipMove>
@@ -259,33 +194,9 @@ function Practice() {
             <FlipMove className="tweets-section">
               {stackedItems.map((item, index) => (
                 <div key={`stacked-${index}`}>
-                  {activeTab === "hate_speech" && (
-                    <TweetCard 
-                      tweet={item} 
-                      disabled={true} 
-                      showPrediction={true}
-                      prediction={item.prediction}
-                      explanation={item.explanation}
-                    />
-                  )}
-                  {activeTab === "fake_news" && (
-                    <ImageCard 
-                      imageUrl={item.url} 
-                      disabled={true} 
-                      showPrediction={true}
-                      prediction={item.prediction}
-                      explanation={item.explanation}
-                    />
-                  )}
-                  {activeTab === "hateful_memes" && (
-                    <MemeCard 
-                      memeUrl={item.url} 
-                      disabled={true} 
-                      showPrediction={true}
-                      prediction={item.prediction}
-                      explanation={item.explanation}
-                    />
-                  )}
+                  {activeTab === "hate_speech" && <TweetCard tweet={item} disabled={true} showPrediction={true} prediction={item.prediction} explanation={item.explanation} isWrong={index === 0} />}
+                  {activeTab === "fake_news" && <ImageCard imageUrl={item.url} disabled={true} showPrediction={true} prediction={item.prediction} explanation={item.explanation} isWrong={index === 0} />}
+                  {activeTab === "hateful_memes" && <MemeCard memeUrl={item.url} disabled={true} showPrediction={true} prediction={item.prediction} explanation={item.explanation} isWrong={index === 0} />}
                 </div>
               ))}
             </FlipMove>
@@ -296,22 +207,17 @@ function Practice() {
           <div className="game-header">
             <h2>🎯 ScoreCard</h2>
             {gameStatus === "playing" && (
-              <>
               <div className="score-container">
-                <p style={{fontSize:'28px',fontWeight:'bold'}}>Your Score</p>
-                <span className="score-box">🔥 Streak: {streak}</span>
-                <span className="score-box">⭐ Score: {score}</span>
+                <span className="score-box" style={{background: '#fef3c7', color: '#b45309'}}>🔥 Streak: {streak}</span>
+                <span className="score-box" style={{background: '#e0f2fe', color: '#0369a1'}}>⭐ Score: {score}</span>
               </div>
-              </>
             )}
             {gameStatus === "gameover" && (
               <div className="gameover-box">
                 <h3>❌ Wrong Prediction!</h3>
                 <p>Your Score: <strong>{score}</strong></p>
                 <p>Best Streak: <strong>{streak}</strong></p>
-                <button className="try-again-btn" onClick={handleRestartGame}>
-                 Try Again
-                </button>
+                <button className="try-again-btn" onClick={handleRestartGame}>Try Again</button>
               </div>
             )}
           </div>
@@ -321,14 +227,12 @@ function Practice() {
   );
 }
 
-// Updated TweetCard component with consistent styling
-function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction,explanation ,isWrong }) {
+function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, explanation ,isWrong }) {
   const [userPrediction, setUserPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handlePredict = async (type) => {
     if (disabled) return;
-    
     setLoading(true);
     setUserPrediction(type);
     try {
@@ -340,7 +244,6 @@ function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPre
       const data = await res.json();
       const modelPrediction = data.label || "No result";
 
-      // In the prediction handling logic
       if (modelPrediction?.toLowerCase() === type.toLowerCase()) {
         onCorrect(modelPrediction);
         if (isLast) {
@@ -348,7 +251,7 @@ function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPre
           onWrong(modelPrediction);
         }
       } else {
-        onWrong(modelPrediction);  // Only pass model's prediction
+        onWrong(modelPrediction); 
       }
     } catch (error) {
       console.error("Prediction failed:", error);
@@ -358,59 +261,37 @@ function TweetCard({ tweet, onCorrect, onWrong, isLast, disabled, score, showPre
   };
 
   return (
-    <div className={`tweet-card ${isWrong ? 'wrong-card' : ''}`} style={{width:'600px'}}>
+    <div className={`tweet-card ${isWrong ? 'wrong-card' : ''}`}>
       <div className="tweet-header">
-        <img
-          className="tweet-avatar"
-          src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-          alt="avatar"
-        />
+        <img className="tweet-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="avatar" />
         <strong>{tweet.username}</strong>
       </div>
       <p className="tweet-text">{tweet.text}</p>
       {!disabled && (
         <div className="prediction-buttons">
-          <button 
-            onClick={() => handlePredict("hateful")} 
-            disabled={loading}
-          >
-            Hateful (+10)
-          </button>
-          <button 
-            onClick={() => handlePredict("offensive")} 
-            disabled={loading}
-          >
-            Offensive (+10)
-          </button>
-          <button 
-            onClick={() => handlePredict("neither")} 
-            disabled={loading}
-          >
-            Neither (+10)
-          </button>
+          <button style={{background: '#fee2e2', color: '#ef4444'}} onClick={() => handlePredict("hateful")} disabled={loading}>Hateful (+10)</button>
+          <button style={{background: '#ffedd5', color: '#ea580c'}} onClick={() => handlePredict("offensive")} disabled={loading}>Offensive (+10)</button>
+          <button style={{background: '#dcfce3', color: '#16a34a'}} onClick={() => handlePredict("neither")} disabled={loading}>Neither (+10)</button>
         </div>
       )}
-      {loading && <div class="loader"></div>}
+      {loading && <div className="loader"></div>}
       {(showPrediction || userPrediction) && !loading && (
         <div className="prediction-result-container">
           <p className="prediction-result">
-            {showPrediction ? "Correct answer: " : "Your prediction: "} 
-            <strong>{prediction || userPrediction}</strong>
+            {showPrediction ? "Correct answer: " : "Your prediction: "} <strong>{prediction || userPrediction}</strong>
           </p>
           {(isWrong || showPrediction) && explanation && (
-  <div className="explanation-box">
-    <p><strong>Model's Analysis:</strong> {prediction}</p>
-    <p><strong>Explanation:</strong> {explanation}</p>
-  </div>
-)}
+            <div className="explanation-box">
+              <p><strong>Model's Analysis:</strong> {prediction}</p>
+              <p><strong>Explanation:</strong> {explanation}</p>
+            </div>
+          )}
         </div>
       )}
-      
     </div>
   );
 }
 
-// Updated ImageCard component with fixed image size
 function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, explanation, isWrong }) {
   const [userPrediction, setUserPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -418,28 +299,19 @@ function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, show
 
   const handleUserChoice = async (userLabel) => {
     if (disabled) return;
-    
     setLoading(true);
     setUserPrediction(userLabel);
     try {
       const response = await fetch(imageUrl);
       if (!response.ok) throw new Error('Failed to fetch image');
-      
       const blob = await response.blob();
       const file = new File([blob], "image.jpg", { type: blob.type });
 
       const formData = new FormData();
       formData.append("image", file);
 
-      const res = await fetch("http://localhost:8001/predict-fakenews", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Prediction failed');
-      }
+      const res = await fetch("http://localhost:8001/predict-fakenews", { method: "POST", body: formData });
+      if (!res.ok) throw new Error('Prediction failed');
 
       const data = await res.json();
       const modelPrediction = data.label?.toLowerCase();
@@ -447,16 +319,11 @@ function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, show
       if (modelPrediction === userLabel.toLowerCase()) {
         setResultMessage(`✅ Correct Prediction (Confidence: ${(data.confidence * 100).toFixed(1)}%)`);
         onCorrect(modelPrediction);
-        if (isLast) {
-          alert(`Perfect streak! Final score: ${score + 10}`);
-          onWrong(modelPrediction);
-        }
+        if (isLast) { alert(`Perfect streak! Final score: ${score + 10}`); onWrong(modelPrediction); }
       } else {
-        // setResultMessage(`❌ Wrong Prediction (Model said: ${modelPrediction}, Confidence: ${(data.confidence * 100).toFixed(1)}%)`);
         onWrong(modelPrediction);
       }
     } catch (error) {
-      console.error("Prediction failed:", error);
       setResultMessage(`❌ Error: ${error.message}`);
     } finally {
       setLoading(false);
@@ -466,70 +333,38 @@ function ImageCard({ imageUrl, onCorrect, onWrong, isLast, disabled, score, show
   return (
     <div className={`tweet-card ${isWrong ? 'wrong-card' : ''}`}>
       <div className="tweet-header">
-        <img
-          className="tweet-avatar"
-          src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-          alt="avatar"
-        />
+        <img className="tweet-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="avatar" />
         <strong>News Post</strong>
       </div>
       <div className="image-container">
-        <img
-          src={imageUrl}
-          alt="news"
-          className="fixed-size-image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "https://via.placeholder.com/300?text=Image+not+available";
-          }}
-        />
+        <img src={imageUrl} alt="news" className="fixed-size-image" onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/300?text=Image+not+available"; }} />
       </div>
       {!disabled && (
         <div className="prediction-buttons">
-          <button 
-            onClick={() => handleUserChoice("fake")} 
-            disabled={loading}
-            style={{background:'red',color:'white'}}
-          >
-            Fake (+10)
-          </button>
-          <button 
-            onClick={() => handleUserChoice("real")} 
-            disabled={loading}
-            style={{background:'green',color:'white'}}
-          >
-            Real (+10)
-          </button>
+          <button style={{background: '#fee2e2', color: '#ef4444'}} onClick={() => handleUserChoice("fake")} disabled={loading}>Fake (+10)</button>
+          <button style={{background: '#dcfce3', color: '#16a34a'}} onClick={() => handleUserChoice("real")} disabled={loading}>Real (+10)</button>
         </div>
       )}
-      {loading && <div class="loader"></div>}
+      {loading && <div className="loader"></div>}
       {(showPrediction || resultMessage) && (
         <div className="prediction-result-container">
           {showPrediction ? (
-            <p className="prediction-result">
-              Correct answer: <strong>{prediction}</strong>
-            </p>
+            <p className="prediction-result">Correct answer: <strong>{prediction}</strong></p>
           ) : (
-            <p className="prediction-result" style={{
-              color: resultMessage.includes('✅') ? 'green' : 'red',
-              fontWeight: 'bold'
-            }}>
-              {resultMessage}
-            </p>
+            <p className="prediction-result" style={{ color: resultMessage.includes('✅') ? '#16a34a' : '#ef4444' }}>{resultMessage}</p>
           )}
         </div>
       )}
       {(isWrong || showPrediction) && explanation && (
-  <div className="explanation-box">
-    <p><strong>Model's Analysis:</strong> {prediction}</p>
-    <p><strong>Explanation:</strong> {explanation}</p>
-  </div>
-)}
+        <div className="explanation-box">
+          <p><strong>Model's Analysis:</strong> {prediction}</p>
+          <p><strong>Explanation:</strong> {explanation}</p>
+        </div>
+      )}
     </div>
   );
 }
 
-// Updated MemeCard component with fixed image size
 function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPrediction, prediction, explanation, isWrong }) {
   const [userPrediction, setUserPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -537,7 +372,6 @@ function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPr
 
   const handleUserChoice = async (userLabel) => {
     if (disabled) return;
-    
     setLoading(true);
     setUserPrediction(userLabel);
     try {
@@ -548,14 +382,8 @@ function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPr
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("http://localhost:8002/classify", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error("Prediction failed");
-      }
+      const res = await fetch("http://localhost:8002/classify", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Prediction failed");
 
       const data = await res.json();
       const modelPrediction = data.label?.toLowerCase();
@@ -563,16 +391,11 @@ function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPr
       if (modelPrediction === userLabel.toLowerCase()) {
         setResultMessage("✅ Correct Prediction");
         onCorrect(modelPrediction);
-        if (isLast) {
-          alert(`Perfect streak! Final score: ${score + 10}`);
-          onWrong(modelPrediction);
-        }
+        if (isLast) { alert(`Perfect streak! Final score: ${score + 10}`); onWrong(modelPrediction); }
       } else {
-        // setResultMessage("❌ Wrong Prediction");
         onWrong(modelPrediction);
       }
     } catch (error) {
-      console.error("Prediction failed:", error);
       setResultMessage("❌ Prediction failed");
     } finally {
       setLoading(false);
@@ -582,63 +405,33 @@ function MemeCard({ memeUrl, onCorrect, onWrong, isLast, disabled, score, showPr
   return (
     <div className={`tweet-card ${isWrong ? 'wrong-card' : ''}`}>
       <div className="tweet-header">
-        <img
-          className="tweet-avatar"
-          src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-          alt="avatar"
-        />
+        <img className="tweet-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="avatar" />
         <strong>Meme Post</strong>
       </div>
       <div className="image-container">
-        <img
-          src={memeUrl}
-          alt="meme"
-          className="fixed-size-image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "https://via.placeholder.com/300?text=Image+not+available";
-          }}
-        />
+        <img src={memeUrl} alt="meme" className="fixed-size-image" onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/300?text=Image+not+available"; }} />
       </div>
       {!disabled && (
         <div className="prediction-buttons">
-          <button 
-            onClick={() => handleUserChoice("hateful")}
-            disabled={loading}
-          >
-            Hateful (+10)
-          </button>
-          <button 
-            onClick={() => handleUserChoice("neutral")}
-            disabled={loading}
-          >
-            Neutral (+10)
-          </button>
+          <button style={{background: '#fee2e2', color: '#ef4444'}} onClick={() => handleUserChoice("hateful")} disabled={loading}>Hateful (+10)</button>
+          <button style={{background: '#dcfce3', color: '#16a34a'}} onClick={() => handleUserChoice("neutral")} disabled={loading}>Neutral (+10)</button>
         </div>
       )}
-      {loading && <div class="loader"></div>}
+      {loading && <div className="loader"></div>}
       {(showPrediction || resultMessage) && (
         <div className="prediction-result-container">
           {showPrediction ? (
-            <p className="prediction-result">
-              Correct answer: <strong>{prediction}</strong>
-            </p>
+            <p className="prediction-result">Correct answer: <strong>{prediction}</strong></p>
           ) : (
-            <p className="prediction-result" style={{
-              color: resultMessage.includes('✅') ? 'green' : 'red',
-              fontWeight: 'bold'
-            }}>
-              {resultMessage}
-            </p>
+            <p className="prediction-result" style={{ color: resultMessage.includes('✅') ? '#16a34a' : '#ef4444' }}>{resultMessage}</p>
           )}
         </div>
       )}
       {(isWrong || showPrediction) && explanation && (
-  <div className="explanation-box">
-    {/* <p><strong>Model's Analysis:</strong> {prediction}</p> */}
-    <p style={{fontFamily:"sans-serif",wordSpacing:"2px",lineHeight:'1.5'}}><strong>Explanation:</strong> {explanation}</p>
-  </div>
-)}
+        <div className="explanation-box">
+          <p><strong>Explanation:</strong> {explanation}</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,26 +1,134 @@
 .sidebar {
-  border-right: 1px solid var(--twitter-background);
-  flex: 0.3;
-  /* min-width: 250px; */
-  margin-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
+  border-right: 1px solid #e2e8f0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth width shrink */
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevents text from breaking layout while shrinking */
+  box-sizing: border-box;
+  flex-shrink: 0; /* Prevents it from being squished */
+  padding: 0;
 }
 
-.sidebar__twitterIcon {
-  color: var(--twitter-color);
-  font-size: 30px !important;
-  margin-left: 20px;
-  margin-bottom: 20px;
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
-.sidebar__tweet {
-  background-color: var(--twitter-color) !important;
-  border: none !important;
-  color: white !important;
-  font-weight: 900 !important;
-  text-transform: inherit !important;
-  border-radius: 30px !important;
-  height: 50px !important;
-  margin-top: 20px !important;
+.sidebar.open {
+  width: 280px;
+  padding: 15px;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+  padding: 15px 10px;
+}
+
+/* Header & Branding */
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 0 5px;
+  height: 40px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar__hamburger-wrapper {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.sidebar__hamburger-wrapper:hover {
+  background-color: #f0f7ff;
+}
+
+.sidebar__hamburger {
+  font-size: 28px !important;
+  color: #1a202c;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 10px;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .sidebar__brand {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar__logoIcon {
+  font-size: 32px !important;
+  color: #0D5EA6;
+}
+
+.sidebar__brand h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.sidebar__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.sidebar__logout {
+  margin-top: auto; 
+  padding-top: 20px;
+}
+
+/* Mobile Settings */
+.mobile-menu-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 99;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  cursor: pointer;
+  color: #1a202c;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+}
+
+@media (max-width: 1000px) {
+  .sidebar { position: fixed; left: -300px; z-index: 1000; box-shadow: none; }
+  .sidebar.open { left: 0; width: 260px; box-shadow: 4px 0 25px rgba(0,0,0,0.15); }
+  .sidebar.collapsed { left: -300px; }
 }

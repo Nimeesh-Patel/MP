@@ -8,9 +8,15 @@ function TweetBox({ addTweet }) {
   const [previewImage, setPreviewImage] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  // 🟢 Cloudinary Config (replace with your own if needed)
+  // 🟢 Cloudinary Config
   const CLOUD_NAME = "dbcled6rb";
   const UPLOAD_PRESET = "avhbxfx5";
+
+  // Smart Avatar Fetcher (Same logic as Post.js to display correctly)
+  const avatarUrl = localStorage.getItem("avatar");
+  const displayAvatar = (!avatarUrl || avatarUrl === "/default_avatar.png" || avatarUrl === "") 
+      ? "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+      : (avatarUrl.startsWith("http") || avatarUrl.startsWith("data:") ? avatarUrl : `http://localhost:8003${avatarUrl}`);
 
   // Handle image selection and preview
   const handleImageChange = (e) => {
@@ -61,7 +67,7 @@ function TweetBox({ addTweet }) {
     let imageUrl = null;
     if (tweetImage) {
       imageUrl = await uploadImageToCloudinary(tweetImage);
-      if (!imageUrl) return; // stop if upload failed
+      if (!imageUrl) return; 
     }
 
     if (addTweet) {
@@ -82,9 +88,7 @@ function TweetBox({ addTweet }) {
     <div className="tweetBox">
       <form onSubmit={sendTweet}>
         <div className="tweetBox__input">
-          <Avatar
-            src={localStorage.getItem("avatar") || "/default_avatar.png"}
-          />
+          <Avatar src={displayAvatar} />
           <input
             type="text"
             placeholder="What's happening?"
@@ -93,29 +97,36 @@ function TweetBox({ addTweet }) {
           />
         </div>
 
-        {/* Image Upload */}
-        <input
-          type="file"
-          accept="image/*"
-          className="tweetBox__fileInput"
-          onChange={handleImageChange}
-        />
+        <div className="tweetBox__tools">
+          <input
+            type="file"
+            accept="image/*"
+            className="tweetBox__fileInput"
+            onChange={handleImageChange}
+          />
+          
+          <Button
+            type="submit"
+            className="tweetBox__tweetButton"
+            disabled={uploading || (!tweetMessage.trim() && !tweetImage)}
+          >
+            {uploading ? "Uploading..." : "Post"}
+          </Button>
+        </div>
 
         {/* Image Preview */}
         {previewImage && (
           <div className="tweetBox__imagePreview">
+            <button 
+              type="button" 
+              className="tweetBox__removePreview" 
+              onClick={() => { setPreviewImage(null); setTweetImage(null); }}
+            >
+              &times;
+            </button>
             <img src={previewImage} alt="Selected" />
           </div>
         )}
-
-        {/* Tweet Button */}
-        <Button
-          type="submit"
-          className="tweetBox__tweetButton"
-          disabled={uploading}
-        >
-          {uploading ? "Uploading..." : "Tweet"}
-        </Button>
       </form>
     </div>
   );

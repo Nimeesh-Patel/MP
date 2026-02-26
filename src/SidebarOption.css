@@ -2,25 +2,51 @@
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  color: #4a5568;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Crucial for smooth collapsing */
+  white-space: nowrap;
 }
 
 .sidebarOption:hover {
-  background-color: #e8f5fe;
-  border-radius: 30px;
-  color: var(--twitter-color);
-  transition: color 100ms ease-out;
+  background-color: #f0f7ff;
+  color: #0D5EA6;
+}
+
+/* Hide text smoothly when sidebar is collapsed */
+.sidebar.collapsed .sidebarOption h2 {
+  opacity: 0;
+  display: none;
+}
+
+/* Center icon automatically when collapsed */
+.sidebar.collapsed .sidebarOption {
+  justify-content: center;
+  padding: 14px 0;
+}
+
+.sidebar.collapsed .sidebarOption:hover {
+  transform: translateY(-2px);
 }
 
 .sidebarOption > .MuiSvgIcon-root {
-  padding: 20px;
+  font-size: 28px !important;
+  min-width: 28px;
 }
 
 .sidebarOption > h2 {
-  font-weight: 800;
-  font-size: 20px;
-  margin-right: 20px;
+  font-weight: 600;
+  font-size: 17px;
+  margin: 0 0 0 16px;
+  letter-spacing: -0.3px;
 }
 
 .sidebarOption--active {
-  color: var(--twitter-color);
+  color: #0D5EA6;
+  background-color: #e6f2ff;
+  font-weight: 800;
 }

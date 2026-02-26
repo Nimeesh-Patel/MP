@@ -24,7 +24,7 @@ const Post = forwardRef(
     isCommentFeed = false, 
     isOnPostPage = false, 
     hideCommentButton = false,
-    onReply // Add the onReply prop
+    onReply 
   }, ref) => {
     const [showGrokModal, setShowGrokModal] = useState(false);
     const [animateGrok, setAnimateGrok] = useState(false);
@@ -36,12 +36,21 @@ const Post = forwardRef(
     const [commentText, setCommentText] = useState("");
     const history = useHistory();
 
+    const getAvatarUrl = (url) => {
+      if (!url || url === "/default_avatar.png" || url === "") {
+        return "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+      }
+      if (url.startsWith("http") || url.startsWith("data:")) {
+        return url;
+      }
+      return `http://localhost:8003${url}`;
+    };
+
     const handleGrokClick = async (e) => {
-      e.stopPropagation(); // Prevent event bubbling
+      e.stopPropagation(); 
       setShowGrokModal(true);
       setTimeout(() => setAnimateGrok(true), 10);
 
-      // 🔁 Call Gemini API here
       setLoadingGrok(true);
       setError(null);
       try {
@@ -50,30 +59,32 @@ const Post = forwardRef(
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text: typeof text === 'string' ? text : text?.text || '' }),
         });
 
         const data = await response.json();
         setGrokResult(data.label || "No label returned");
       } catch (err) {
         console.error("Error fetching from Gemini API:", err);
-        setError("Failed to fetch prediction.");
+        setError("Failed to fetch prediction. Ensure API is running.");
       } finally {
         setLoadingGrok(false);
       }
     };
 
-    const handleGrokClose = () => {
+    const handleGrokClose = (e) => {
+      if (e) e.stopPropagation();
       setAnimateGrok(false);
       setTimeout(() => setShowGrokModal(false), 300);
     };
 
     const handleCommentClick = (e) => {
-      e.stopPropagation(); // Prevent event bubbling
+      e.stopPropagation(); 
       setShowCommentModal(true);
     };
     
-    const handleCommentClose = () => {
+    const handleCommentClose = (e) => {
+      if (e) e.stopPropagation();
       setShowCommentModal(false);
       setCommentText("");
     };
@@ -81,11 +92,12 @@ const Post = forwardRef(
     const handleCommentSubmit = (e) => {
       e.preventDefault();
       if (commentText.trim() && addReply && postId) {
+        // FIX: Grab real user info instead of hardcoding Anonymous
         addReply(postId, {
           text: commentText,
-          avatar: "/default_avatar.png",
-          displayName: "Anonymous",
-          username: "user123",
+          avatar: localStorage.getItem("avatar") || "/default_avatar.png",
+          displayName: localStorage.getItem("username") || "User",
+          username: localStorage.getItem("username") || "user123",
           verified: false,
           id: Date.now()
         });
@@ -95,29 +107,25 @@ const Post = forwardRef(
     };
 
     const handleReplyClick = (e) => {
-      e.stopPropagation(); // Prevent event bubbling
+      e.stopPropagation(); 
       if (onReply) {
-        onReply(); // Call the onReply function if provided
+        onReply(); 
       } else {
-        handleCommentClick(e); // Fallback to the original comment modal
+        handleCommentClick(e); 
       }
     };
 
-    // In your Post component, update the handlePostClick function
-const handlePostClick = (e) => {
-  // Only navigate if clicking the post body, not buttons
-  if (e.target.closest('button') || 
-      e.target.closest('a') || 
-      e.target.tagName === 'IMG' ||
-      isReply || 
-      isCommentFeed || 
-      isOnPostPage) {
-    return;
-  }
-  
-  // Navigate to the post/comment page
-  history.push(`/post/${postId}`);
-};
+    const handlePostClick = (e) => {
+      if (e.target.closest('button') || 
+          e.target.closest('a') || 
+          e.target.tagName === 'IMG' ||
+          isReply || 
+          isCommentFeed || 
+          isOnPostPage) {
+        return;
+      }
+      history.push(`/post/${postId}`);
+    };
 
     return (
       <div 
@@ -127,7 +135,7 @@ const handlePostClick = (e) => {
         style={{ cursor: (isReply || isCommentFeed || isOnPostPage) ? 'default' : 'pointer' }}
       >
         <div className="post__avatar">
-          <Avatar src={avatar} />
+          <Avatar src={getAvatarUrl(avatar)} />
         </div>
         <div className="post__body">
           <div className="post__header">
@@ -135,102 +143,89 @@ const handlePostClick = (e) => {
               <h3>
                 {displayName}{" "}
                 <span className="post__headerSpecial">
-                  {verified && <VerifiedUserIcon className="post__badge" />} @
-                  {username}
+                  {verified && <VerifiedUserIcon className="post__badge" />} @{username}
                 </span>
               </h3>
             </div>
             <div className="post__headerDescription">
               <p>{typeof text === 'string' ? text : text?.text || ''}</p>
             </div>
+            
             <div className="tweet__actions tweet__actions--top">
               <button
                 className="tweet__grokButton"
-                title="Grok"
+                title="AI Analysis"
                 onClick={handleGrokClick}
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#fff"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ verticalAlign: "middle" }}
-                >
-                  <path d="M12 19c-7-4-7-11 0-15 7 4 7 11 0 15z" />
-                  <line x1="12" y1="19" x2="12" y2="22" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
               </button>
             </div>
           </div>
 
-          {image && <img src={image} alt="" />}
+          {image && <img src={image} alt="post visual" />}
+          
           <div className="post__footer">
             {!hideCommentButton && (
               <button className="post__commentButton" onClick={handleReplyClick} title="Comment">
                 <ChatBubbleOutlineIcon fontSize="small" />
               </button>
             )}
-  {/* ❤️ Like Button */}
-<button
-    className={`post__likeButton ${liked ? "liked" : ""}`}
-    title="Like"
-    onClick={(e) => {
-      e.stopPropagation(); // prevent post click
-      setLiked(!liked);
-    }}
-  >
-    {liked ? (
-      <FavoriteIcon fontSize="small" />
-    ) : (
-      <FavoriteBorderIcon fontSize="small" />
-    )}
-  </button>
+            <button
+                className={`post__likeButton ${liked ? "liked" : ""}`}
+                title="Like"
+                onClick={(e) => {
+                  e.stopPropagation(); 
+                  setLiked(!liked);
+                }}
+              >
+                {liked ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+            </button>
           </div>
 
           {/* GROK Modal */}
           {showGrokModal && (
             <div className="grokModalRightOverlay" onClick={handleGrokClose}>
               <div
-                className={`grokModalRight${
-                  animateGrok ? " grokModalRight--show" : ""
-                }`}
+                className={`grokModalRight${animateGrok ? " grokModalRight--show" : ""}`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="grokModalHeader">
-                  <span>More details</span>
-                  <button className="grokModalClose" onClick={handleGrokClose}>
-                    &times;
-                  </button>
+                  <span>AI Intent Analysis</span>
+                  <button className="grokModalClose" onClick={handleGrokClose}>&times;</button>
                 </div>
 
                 <div className="grokModalContent">
                   <div className="grokModalTweet">
-                    <Avatar src={avatar} style={{ marginRight: 8 }} />
-                    <div>
-                      <strong>{displayName}</strong>{" "}
-                      {verified && (
-                        <VerifiedUserIcon className="post__badge" />
-                      )}{" "}
-                      @{username}
-                      <div style={{ marginTop: 4 }}>{text}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                      <Avatar src={getAvatarUrl(avatar)} style={{ marginRight: 8, width: 32, height: 32 }} />
+                      <div>
+                        <strong style={{ color: '#fff' }}>{displayName}</strong>{" "}
+                        {verified && <VerifiedUserIcon className="post__badge" style={{ fontSize: 16 }} />}{" "}
+                        <span style={{ color: '#94a3b8', fontSize: '14px' }}>@{username}</span>
+                      </div>
+                    </div>
+                    <div style={{ color: '#f8fafc', fontSize: '15px', fontStyle: 'italic', paddingLeft: '40px', wordWrap: 'break-word' }}>
+                      "{typeof text === 'string' ? text : text?.text || ''}"
                     </div>
                   </div>
-                  <hr style={{ margin: "12px 0" }} />
-                  <div>
+                  
+                  <div className="grokResultBox">
                     {loadingGrok ? (
-                      <p>Analyzing with Gemini...</p>
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#00d2ff' }}>
+                        <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⚙️</span> Analyzing intent...
+                      </div>
                     ) : error ? (
-                      <p style={{ color: "red" }}>{error}</p>
+                      <p style={{ color: "#ef4444", fontSize: "14px", lineHeight: "1.5", wordWrap: "break-word" }}>{error}</p>
                     ) : (
-                      <ul>
-                        <li>This post has been analyzed.</li>
+                      <ul style={{ margin: 0, paddingLeft: '20px', color: '#f8fafc', lineHeight: '1.6' }}>
+                        <li style={{ marginBottom: '8px' }}>This post has been analyzed.</li>
                         <li>
                           Prediction:{" "}
-                          <strong>
+                          <strong style={{ color: '#00d2ff', fontSize: '16px', display: 'block', marginTop: '4px', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                             {grokResult || "No prediction available"}
                           </strong>
                         </li>
@@ -251,15 +246,15 @@ const handlePostClick = (e) => {
                   <button className="commentModalClose" onClick={handleCommentClose}>&times;</button>
                 </div>
                 <div className="commentModalUser">
-                  <Avatar src={avatar} style={{ marginRight: 8 }} />
+                  <Avatar src={getAvatarUrl(avatar)} style={{ marginRight: 8 }} />
                   <div>
-                    <strong>{displayName}</strong>{" "}
+                    <strong style={{color:'#1a202c'}}>{displayName}</strong>{" "}
                     {verified && <VerifiedUserIcon className="post__badge" />}{" "}
-                    @{username}
-                    <div style={{ marginTop: 4, fontSize: 14, color: '#aaa' }}>{text}</div>
+                    <span style={{ color: '#64748b' }}>@{username}</span>
+                    <div style={{ marginTop: 4, fontSize: 14, color: '#64748b', wordWrap: 'break-word' }}>{typeof text === 'string' ? text : text?.text || ''}</div>
                   </div>
                 </div>
-                <form onSubmit={handleCommentSubmit}>
+                <form onSubmit={handleCommentSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                   <textarea
                     className="commentModalTextarea"
                     placeholder="Post your reply"

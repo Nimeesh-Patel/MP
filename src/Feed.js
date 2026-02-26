@@ -49,6 +49,8 @@ function Feed({ posts, setPosts, addTweet, addReply, redditPosts, setRedditPosts
           username: p.username,
           verified: false,
           text: p.text,
+          // This line maps the 'avatar' field from the backend response to the 'avatar' prop for the Post component.
+          // If p.avatar is missing, it defaults to "/default_avatar.png".
           avatar: p.avatar || "/default_avatar.png",
           image: p.image,
           label: "User",

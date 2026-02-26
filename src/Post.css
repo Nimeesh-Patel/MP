@@ -1,398 +1,257 @@
-/* =======================
-   POST BASE STYLING
-======================= */
 .post {
   position: relative;
   display: flex;
   align-items: flex-start;
-  border-bottom: 1px solid var(--twitter-background);
-  padding: 10px 0 16px 0;
-  width: 600px;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 20px;
   background: #fff;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* =======================
-   POST BODY
-======================= */
+.post:hover {
+  background-color: #f8fafc;
+}
+
 .post__body {
   flex: 1;
-  padding: 10px;
+  padding-left: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
-/* Post Image Styling — no zoom, fits perfectly */
+/* Creating a relative container ensures the Grok button stays inside bounds */
+.post__header {
+  position: relative;
+  padding-right: 45px; /* Gives absolute priority to the grok button space */
+}
+
+/* Keeps the Grok button fixed in the top right WITHOUT overlapping the badge */
+.tweet__actions--top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+}
+
 .post__body > img {
   display: block;
-  max-width: 100%;
+  width: 100%;
   height: auto;
-  max-height: 400px;
-  object-fit: contain; /* full image visible */
+  max-height: 500px; /* Allows taller images but keeps them contained */
+  object-fit: cover; /* Graceful cropping like Twitter */
   border-radius: 16px;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
 }
 
-/* Optional fixed-size variant */
-.post__body > img.fixed-size {
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-/* =======================
-   HEADER & TEXT
-======================= */
 .post__headerText > h3 {
   font-size: 15px;
+  font-weight: 700;
   margin-bottom: 4px;
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Prevents overflow pushing the badge out */
+  gap: 4px;
 }
 
 .post__headerDescription {
   margin-bottom: 10px;
   font-size: 15px;
   line-height: 1.5;
-  color: #222;
+  color: #2d3748;
+  word-wrap: break-word;
 }
 
 .post__badge {
-  font-size: 14px !important;
-  color: var(--twitter-color);
+  font-size: 16px !important;
+  color: #0D5EA6;
 }
 
 .post__headerSpecial {
-  font-weight: 600;
-  font-size: 12px;
-  color: gray;
+  font-weight: 500;
+  font-size: 14px;
+  color: #718096;
 }
 
-/* =======================
-   AVATAR & FOOTER
-======================= */
 .post__avatar {
-  padding: 16px;
+  padding-top: 4px;
 }
 
 .post__footer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
-}
-
-/* =======================
-   COMMENT BUTTON
-======================= */
-.post__commentButton {
-  background: none;
-  border: none;
-  padding: 0 8px 0 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  color: inherit;
-  transition: all 0.2s ease;
-}
-
-.post__commentButton:hover {
-  transform: scale(1.1);
-}
-
-.post__commentButton:hover svg {
-  color: #1da1f2;
-}
-
-.post__commentButton:active {
-  transform: scale(0.95);
-}
-
-/* =======================
-   GROK / ACTION BUTTONS
-======================= */
-.tweet__actions--top {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  z-index: 2;
-}
-
-.tweet__grokButton {
-  background: #1da1f2;
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 6px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(29,161,242,0.15);
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-}
-
-.tweet__grokButton:hover {
-  background: #0d8ddb;
-}
-
-/* =======================
-   MODALS (GROK + COMMENTS)
-======================= */
-.grokModalOverlay,
-.commentModalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.45);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.grokModal,
-.commentModal {
-  background: #18191a;
-  color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.25);
-  padding: 24px 32px;
-  min-width: 340px;
-  max-width: 420px;
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.commentModal {
-  background: #181c20;
-  display: flex;
-  flex-direction: column;
-}
-
-/* =======================
-   COMMENT MODAL DETAILS
-======================= */
-.commentModalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.commentModalClose {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0 8px;
-}
-
-.commentModalUser {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.commentModalTextarea {
-  width: 100%;
-  min-height: 80px;
-  border-radius: 8px;
-  border: 1px solid #333;
-  background: #222;
-  color: #fff;
-  padding: 12px;
-  margin-bottom: 16px;
-  font-size: 16px;
-  resize: vertical;
-}
-
-.commentModalReplyBtn {
-  background: #1da1f2;
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  padding: 8px 24px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 16px;
-  align-self: flex-end;
-  transition: background 0.2s;
-}
-
-.commentModalReplyBtn:disabled {
-  background: #444;
-  cursor: not-allowed;
-}
-
-/* =======================
-   REPLIES STYLING
-======================= */
-.replies-section {
-  background: #fff;
-  border-top: 1px solid #e1e8ed;
-}
-
-.replies-section h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #222;
-  margin: 0 0 16px 0;
-  padding: 16px 16px 8px 16px;
-  border-bottom: 1px solid #e1e8ed;
-}
-
-/* =======================
-   REPLY POSTS
-======================= */
-.post--reply {
-  background: #f8f9fa;
-  border-left: 4px solid #1da1f2;
-  margin: 0 16px;
-  border-radius: 0 8px 8px 0;
-  transition: background-color 0.2s ease;
-  position: relative;
-}
-
-.post--reply:hover {
-  background: #f1f3f4;
-}
-
-.post--reply .post__avatar {
-  padding: 16px 20px;
-}
-
-.post--reply .post__body {
-  padding: 8px 10px 10px 0;
-}
-
-.post--reply .post__footer {
-  margin-top: 12px;
-}
-
-/* Connector line for nested replies */
-.post--reply::before {
-  content: '';
-  position: absolute;
-  left: 44px;
-  top: -8px;
-  width: 2px;
-  height: 8px;
-  background: #1da1f2;
-  opacity: 0.6;
-}
-
-/* =======================
-   COMMENT FEED POSTS
-======================= */
-.post--comment-feed {
-  border: 1px solid #e1e8ed;
-  margin: 8px 0;
-  border-radius: 8px;
-  background: #fff;
-  transition: background-color 0.2s ease;
-}
-
-.post--comment-feed:hover {
-  background: #f8f9fa;
-}
-
-.comment-feed-item {
-  border-bottom: 1px solid #e1e8ed;
-}
-
-.comment-feed-item:last-child {
-  border-bottom: none;
-}
-
-.post--comment-feed .post__body {
-  padding: 12px 16px;
-}
-
-.post--comment-feed .post__avatar {
-  padding: 12px 16px;
-}
-
-.post--comment-feed .post__footer {
-  padding: 0 16px 12px 16px;
-}
-
-/* =======================
-   POST PAGE VARIANT
-======================= */
-.post--on-post-page {
-  cursor: default !important;
-}
-
-.post--on-post-page .post__body {
-  pointer-events: none;
-}
-
-.post--on-post-page .post__footer,
-.post--on-post-page .tweet__actions,
-.post--on-post-page .tweet__grokButton {
-  pointer-events: auto;
-}
-
-/* =======================
-   REPLY INPUT SECTION
-======================= */
-.reply-input-section {
-  background: #fff;
-  border-bottom: 1px solid #e1e8ed;
-  padding: 16px;
-}
-
-.reply-input-section textarea {
-  font-family: inherit;
-  font-size: 15px;
-  line-height: 1.4;
-  transition: border-color 0.2s ease;
-}
-
-.reply-input-section textarea:focus {
-  outline: none;
-  border-color: #1da1f2;
-  box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.1);
-}
-
-.reply-button {
-  transition: all 0.2s ease;
-}
-
-.reply-button:hover:not(:disabled) {
-  background: #1a8cd8 !important;
-  transform: translateY(-1px);
-}
-.post__footer {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
+  margin-top: 15px;
   justify-content: flex-start;
-  gap: 20px; /* space between buttons */
+  gap: 30px;
 }
 
 .post__footer button {
   border: none;
   background: transparent;
   cursor: pointer;
-  padding: 4px;
+  padding: 8px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s, color 0.2s;
+  transition: all 0.2s;
+  color: #718096;
 }
 
 .post__footer button:hover {
-  transform: scale(1.2);
+  background-color: #e2e8f0;
+  transform: scale(1.1);
 }
 
-.post__likeButton svg {
-  color: #e0245e; /* Twitter-like pink */
+.post__likeButton.liked svg {
+  color: #e0245e;
 }
 
-.post__commentButton svg {
-  color: #1da1f2;
+.post__commentButton:hover svg {
+  color: #0D5EA6;
+}
+
+.tweet__grokButton {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #00d2ff;
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  border-radius: 999px;
+  padding: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.tweet__grokButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.4);
+}
+
+/* Modals */
+.grokModalRightOverlay, .commentModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+}
+
+.grokModalRightOverlay {
+  justify-content: flex-end;
+}
+
+.commentModalOverlay {
+  align-items: center;
+  justify-content: center;
+}
+
+.grokModalRight {
+  background: #1e293b;
+  color: #f8fafc;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.3);
+  padding: 30px;
+  min-width: 400px;
+  max-width: 450px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.grokModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00d2ff;
+  margin-bottom: 20px;
+}
+
+.grokModalClose {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.commentModal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.commentModalHeader {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.commentModalClose {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.commentModalTextarea {
+  width: 100%;
+  min-height: 100px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  margin: 16px 0;
+  font-size: 16px;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.commentModalReplyBtn {
+  background: #0D5EA6;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 24px;
+  font-weight: bold;
+  cursor: pointer;
+  float: right;
+}
+
+/* ==============================================================
+   CRITICAL FIX: Fixes "Can't click close on PostPage" bug
+============================================================== */
+.post--on-post-page .post__body {
+  pointer-events: none;
+}
+
+.post--on-post-page .post__footer,
+.post--on-post-page .tweet__actions,
+.post--on-post-page .tweet__grokButton,
+.post--on-post-page .grokModalRightOverlay, 
+.post--on-post-page .commentModalOverlay,
+.post--on-post-page .grokModalRight,
+.post--on-post-page .commentModal {
+  pointer-events: auto !important;
+}
+
+.post--reply {
+  background: #f8f9fa;
+  border-left: 4px solid #0D5EA6;
+  margin: 0;
 }

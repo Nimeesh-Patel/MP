@@ -38,14 +38,14 @@ function MultimodalTest() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const newPost = {
-          displayName: "Classifier",
+          displayName: "System Analysis",
           username: selectedModel,
           verified: true,
           avatar:
             "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-          text: "Image analyzed",
+          text: "Visual scan complete.",
           image: reader.result,
-          label: `${data.label} (Confidence: ${data.confidence})`,
+          label: `Status: ${data.label} | Confidence: ${data.confidence}`,
         };
         setPosts((prev) => [newPost, ...prev]);
       };
@@ -61,12 +61,12 @@ function MultimodalTest() {
 
   return (
     <div className="feed">
-      
+      <div className="feed__header">
+        <h2>Intelligence Tools</h2>
+      </div>
 
       <form onSubmit={handleSubmit} className="tweetBox">
-        {/* <div className="feed__header"> */}
-        <h2> Fake News & Hate Speech Classifier</h2>
-      {/* </div> */}
+        <h2>New Media Scan</h2>
         <div className="tweetBox__top">
           <img
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
@@ -95,24 +95,26 @@ function MultimodalTest() {
           className="tweetBox__tweetButton"
           disabled={loading}
         >
-          {loading ? "Analyzing..." : "Submit"}
+          {loading ? "Analyzing Upload..." : "Run Analysis"}
         </button>
       </form>
 
-      <FlipMove>
-        {posts.map((post, index) => (
-          <Post
-            key={index}
-            displayName={post.displayName}
-            username={post.username}
-            verified={post.verified}
-            text={post.text}
-            avatar={post.avatar}
-            image={post.image}
-            label={post.label}
-          />
-        ))}
-      </FlipMove>
+      <div style={{ padding: '0 20px' }}>
+        <FlipMove>
+          {posts.map((post, index) => (
+            <Post
+              key={index}
+              displayName={post.displayName}
+              username={post.username}
+              verified={post.verified}
+              text={post.label} // Display result clearly
+              avatar={post.avatar}
+              image={post.image}
+              label={post.label}
+            />
+          ))}
+        </FlipMove>
+      </div>
     </div>
   );
 }

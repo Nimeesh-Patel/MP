@@ -52,7 +52,9 @@ function Signup() {
       profilePhoto: null,
     }));
     setPreviewUrl(defaultProfile);
-    fileInputRef.current.value = "";
+    if(fileInputRef.current){
+       fileInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -134,8 +136,6 @@ function Signup() {
         <div className="auth-form-container">
           <h2 className="auth-title">Sign up</h2>
           
-          
-
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="auth-input-group">
               <input

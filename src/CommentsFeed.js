@@ -63,30 +63,40 @@ function CommentsFeed({ posts = [] }) {
 
   return (
     <div className="feed">
-      <div className="feed__header">
+      <div className="feed__header" style={{ display: "flex", alignItems: "center" }}>
         <button
           onClick={() => history.goBack()}
           style={{
-            background: "none",
+            background: "#f0f7ff",
             border: "none",
-            color: "#1da1f2",
-            fontSize: 24,
+            color: "#0D5EA6",
+            fontSize: 20,
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
             cursor: "pointer",
-            marginRight: 8,
+            marginRight: 15,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.2s ease"
           }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#e2f1ff"}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#f0f7ff"}
         >
           &larr;
         </button>
-        <h2 style={{ display: "inline", color: "#222" }}>Comments Feed</h2>
+        <h2 style={{ display: "inline", color: "#1a202c", margin: 0 }}>Comments Feed</h2>
       </div>
 
       {commentsFeed.length === 0 ? (
         <div
           style={{
-            padding: "32px 16px",
+            padding: "60px 20px",
             textAlign: "center",
-            color: "#8899a6",
+            color: "#718096",
             fontSize: "16px",
+            fontWeight: 500
           }}
         >
           No comments yet. Be the first to comment on a post!
@@ -97,20 +107,26 @@ function CommentsFeed({ posts = [] }) {
             const originalPost = getOriginalPost(comment.postId);
 
             return (
-              <div key={comment._id || index} className="comment-feed-item">
+              <div key={comment._id || index} className="comment-feed-item" style={{
+                marginBottom: "12px",
+                borderBottom: "1px solid rgba(0,0,0,0.06)",
+                paddingBottom: "10px"
+              }}>
                 {/* Show original post context */}
                 {originalPost && (
                   <div
                     className="original-post-context"
                     style={{
-                      padding: "12px 16px",
-                      background: "#f8f9fa",
-                      borderBottom: "1px solid #e1e8ed",
+                      padding: "10px 20px",
+                      background: "#fafbfc",
                       fontSize: "14px",
-                      color: "#8899a6",
+                      color: "#718096",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px"
                     }}
                   >
-                    <span>Replying to: </span>
+                    <span style={{ fontWeight: 500 }}>Replying to: </span>
                     <button
                       onClick={() =>
                         history.push(`/post/${originalPost.id || originalPost._id}`)
@@ -118,25 +134,31 @@ function CommentsFeed({ posts = [] }) {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#1da1f2",
+                        color: "#0D5EA6",
                         cursor: "pointer",
-                        textDecoration: "underline",
+                        fontWeight: 600,
+                        padding: 0,
+                        transition: "color 0.2s ease"
                       }}
+                      onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+                      onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
                     >
-                      {originalPost.text?.length > 50
-                        ? `${originalPost.text.substring(0, 50)}...`
-                        : originalPost.text}
+                      {originalPost.text?.length > 45
+                        ? `"${originalPost.text.substring(0, 45)}..."`
+                        : `"${originalPost.text}"`}
                     </button>
                   </div>
                 )}
 
                 {/* Render comment as a post */}
-                <Post
-                  {...comment}
-                  postId={`comment-${comment._id || index}`}
-                  isReply={true}
-                  isCommentFeed={true}
-                />
+                <div style={{ padding: "0 10px" }}>
+                  <Post
+                    {...comment}
+                    postId={`comment-${comment._id || index}`}
+                    isReply={true}
+                    isCommentFeed={true}
+                  />
+                </div>
               </div>
             );
           })}
