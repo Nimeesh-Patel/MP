@@ -1,7 +1,6 @@
 .feed {
-  flex: 1; /* MAGIC BULLET: Absorbs all remaining space */
-  max-width: 750px; /* Prevents it from getting absurdly wide on huge monitors */
-  width: 100%;
+  flex: 1; /* 🔥 CHANGED FROM 0.4 TO 1 TO ABSORB EMPTY SPACE */
+  max-width: 650px; /* Keeps the home page feed looking normal */
   border-right: 1px solid #e6ecf0;
   border-left: 1px solid #e6ecf0;
   min-width: 0;
@@ -9,7 +8,12 @@
   background: #ffffff;
   scroll-behavior: smooth;
   font-family: "Inter", "Roboto", "Segoe UI", sans-serif;
-  box-sizing: border-box;
+}
+
+/* 🔥 ADD THIS NEW CLASS TO LET OTHER PAGES STRETCH FULLY */
+.feed.feed--full {
+  max-width: 100% !important; /* 🔥 Absolutely forces the feed to take all remaining space */
+  flex: 1 !important;
 }
 
 /* Hide scrollbar */
@@ -25,7 +29,7 @@
 .feed__header {
   position: sticky;
   top: 0;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   z-index: 100;
   border-bottom: 1px solid #e6ecf0;

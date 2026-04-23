@@ -45,7 +45,7 @@ async def explain_prediction(request: ExplanationRequest):
     try:
         if request.content_type == "tweet":
             # Text-only analysis using gemini-1.5-flash
-            model = "gemini-2.5-pro"
+            model = "gemini-2.0-flash"
             parts = [{"text": f"""Analyze this tweet classified as {request.model_prediction}:
                     Content: \"\"\"{request.content}\"\"\"
                     
@@ -53,7 +53,7 @@ async def explain_prediction(request: ExplanationRequest):
                     Provide a concise 1-2 sentence explanation."""}]
         else:
             # Multimodal analysis using gemini-1.5-pro
-            model = "gemini-2.5-pro"
+            model = "gemini-2.0-flash"
             image_data = get_image_data(request.content)
             parts = [
                 {"text": f"""Analyze this {request.content_type} classified as {request.model_prediction}.

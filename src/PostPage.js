@@ -108,7 +108,7 @@ function PostPage({ posts = [], redditPosts = [], replies = {}, addReply }) {
 
   if (loading) {
     return (
-      <div className="feed">
+      <div className="feed feed--full">
         <div className="feed__header">
           <h2>Loading post...</h2>
         </div>
@@ -118,7 +118,7 @@ function PostPage({ posts = [], redditPosts = [], replies = {}, addReply }) {
 
   if (!post) {
     return (
-      <div className="feed">
+      <div className="feed feed--full">
         <div className="feed__header" style={{ display: "flex", alignItems: "center" }}>
           <button onClick={() => history.goBack()} style={{ background: '#f1f5f9', border: 'none', color: '#0D5EA6', fontSize: 20, width: 40, height: 40, borderRadius: '50%', cursor: 'pointer', marginRight: 15 }}>&larr;</button>
           <h2 style={{ display: "inline", color: "#1a202c", margin: 0 }}>Post</h2>
@@ -188,7 +188,7 @@ function PostPage({ posts = [], redditPosts = [], replies = {}, addReply }) {
   };
 
   return (
-    <div className="feed">
+    <div className="feed feed--full">
       <div className="feed__header" style={{ display: "flex", alignItems: "center" }}>
         <button onClick={() => history.goBack()} style={{ background: '#f1f5f9', border: 'none', color: '#0D5EA6', fontSize: 20, width: 40, height: 40, borderRadius: '50%', cursor: 'pointer', marginRight: 15, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>&larr;</button>
         <h2 style={{ display: "inline", color: "#1a202c", margin: 0 }}>

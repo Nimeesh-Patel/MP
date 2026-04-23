@@ -26,16 +26,6 @@ function Profile() {
     fetchProfile();
   }, [userId]);
 
-  if (!profile) {
-    return (
-      <div className="feed">
-        <div className="feed__header"><h2>Loading...</h2></div>
-        <p style={{padding: '20px', color: '#718096'}}>Loading profile...</p>
-      </div>
-    );
-  }
-
-  // Ensure robust fallback for profile page images
   const getAvatarUrl = (url) => {
     if (!url || url === "/default_avatar.png" || url === "") {
       return "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
@@ -45,6 +35,15 @@ function Profile() {
     }
     return `http://localhost:8003${url}`;
   };
+
+  if (!profile) {
+    return (
+      <div className="feed">
+        <div className="feed__header"><h2>Loading...</h2></div>
+        <p style={{padding: '20px', color: '#718096'}}>Loading profile...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="feed" style={{ background: '#ffffff', minHeight: '100vh' }}>

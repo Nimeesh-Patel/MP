@@ -12,14 +12,12 @@ import CommentsFeed from "./CommentsFeed";
 import Profile from "./Profile";
 import { BrowserRouter as Router, Route, Switch, useLocation } from "react-router-dom";
 
-// We extract the routing layout into a child component so we can use useLocation()
 function AppContent({ posts, setPosts, redditPosts, setRedditPosts, replies, commentsFeed, addTweet, addReply }) {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <div className={isAuthPage ? "auth-app-layout" : "app"}>
-      {/* Sidebar is completely hidden if we are on Login or Signup */}
       {!isAuthPage && <Sidebar />}
       
       <Switch>
@@ -36,34 +34,25 @@ function AppContent({ posts, setPosts, redditPosts, setRedditPosts, replies, com
           {!isAuthPage && <Widgets />}          
         </Route>
 
-        <Route path="/login">
-          <Login />
-        </Route>
-
-        <Route path="/signup">
-          <Signup />
-        </Route>
-
+        <Route path="/login"><Login /></Route>
+        <Route path="/signup"><Signup /></Route>
         <Route path="/practice" component={Practice} />
         <Route path="/classifier" component={MultimodalTest} />
-        <Route path="/profile/:userId" component={Profile} />
+
+        {/* 🔥 FIX: Widgets added next to the Profile feed! */}
+        <Route path="/profile/:userId" render={(props) => (
+          <>
+            <Profile {...props} />
+            <Widgets />
+          </>
+        )} />
 
         <Route path="/comments" render={(props) => (
-          <CommentsFeed 
-            {...props} 
-            commentsFeed={commentsFeed}
-            posts={posts}
-          />
+          <CommentsFeed {...props} commentsFeed={commentsFeed} posts={posts} />
         )} />
 
         <Route path="/post/:postId" render={(props) => (
-          <PostPage 
-            {...props} 
-            posts={posts} 
-            redditPosts={redditPosts}
-            replies={replies}
-            addReply={addReply}
-          />
+          <PostPage {...props} posts={posts} redditPosts={redditPosts} replies={replies} addReply={addReply} />
         )} />
       </Switch>
     </div>
@@ -81,8 +70,6 @@ function App() {
       const userId = localStorage.getItem("userId");
       const username = localStorage.getItem("username");
       const email = localStorage.getItem("email");
-      
-      // FIX: Changed "profile_photo" to "avatar" to match your Login.js storage key
       const avatar = localStorage.getItem("avatar");
 
       if (!userId) {
@@ -96,7 +83,7 @@ function App() {
         userId,
         username,
         email,
-        avatar: avatar || "/default_avatar.png", // Ensures it never sends undefined/null
+        avatar: avatar || "/default_avatar.png", 
       };
 
       const res = await fetch("http://localhost:8003/posts/", {
@@ -136,6 +123,7 @@ function App() {
     const newReply = {
       ...reply,
       ...savedReply,
+      avatar: savedReply.avatar || localStorage.getItem("avatar") || "/default_avatar.png",
       originalPostId: postId,
     };
 

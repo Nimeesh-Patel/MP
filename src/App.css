@@ -7,10 +7,10 @@ body {
 .app {
   display: flex;
   height: 100vh;
-  max-width: 1450px;
-  margin-left: auto;
-  margin-right: 0;
-  padding: 0 1px;
+  width: 100%; /* 🔥 THIS WAS MISSING: Forces the container to span the screen */
+  max-width: 1350px;
+  margin: 0 auto; 
+  padding: 0 10px;
 }
 
 .auth-app-layout {
